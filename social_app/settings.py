@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 3rd party
+    'crispy_forms',
+
     # Local
 
     'users.apps.UsersConfig',
@@ -169,3 +172,12 @@ LOGGING = {
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# I've created custom User in users.models, because I wanted to
+# authenticate users using email address instead of a username
+AUTH_USER_MODEL = 'users.MyUser'
+
+
+# Telling crispy to use bootstrap v.4 as default
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

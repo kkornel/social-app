@@ -1,6 +1,23 @@
 {% extends 'social/base.html' %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
-<p>hello from register</p>
+<div class="col-sm-6 offset-sm-3 text-center">
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group mb-1">
+            <legend class="border-bottom mb-3 pb-1">JoinToday!</legend>
+            {{form|crispy}}
+        </fieldset>
+        <div class="form-group pt-0 mt-0">
+            <button class="btn btn-primary" type="submit">Sign Up</button>
+        </div>
+    </form>
+    <div class="border-top pt-1">
+        <small class="">
+            Already Have An Account?
+            <a class="ml-2" href="">Sign In</a>
+        </small>
+    </div>
+</div>
 {% endblock content %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-# from .admin import UserCreationForm
+from .admin import UserCreationForm
 
 
 def register(request):
@@ -9,5 +9,5 @@ def register(request):
     #     if form.is_valid():
     #         print()
     # else:
-    #     form = UserCreationForm()
-    return render(request, 'users/register.html')
+    form = UserCreationForm()
+    return render(request, 'users/register.html', {'form': form})
