@@ -2,10 +2,13 @@ import logging
 
 from django import forms
 from django.contrib import admin
+from django.contrib.auth import password_validation
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
+                                       ReadOnlyPasswordHashField)
 from django.contrib.auth.models import Group
-from django.core.validators import RegexValidator
+from django.forms.widgets import EmailInput, PasswordInput, TextInput
+from django.utils.safestring import mark_safe
 
 from .models import MyUser
 
@@ -20,6 +23,23 @@ those forms here in admin.py, instead of forms.py.
 logger = logging.getLogger(__name__)
 
 
+class CustomAuthForm(AuthenticationForm):
+    """
+    I don't want to have labels on standrad LoginView such as "Email" or "Password"
+    so I've created new CustomForm and changed those for empty strings.
+    """
+    username = forms.CharField(label='', widget=EmailInput(
+        attrs={'class': 'validate', 'placeholder': 'Email'}))
+    password = forms.CharField(label='', widget=PasswordInput(
+        attrs={'placeholder': 'Password'}))
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    username = forms.CharField(label='', widget=EmailInput(
+        attrs={'class': 'validate', 'placeholder': 'Email'}))
+    # captcha = ReCa
+
+
 class UserCreationForm(forms.ModelForm):
     """
     A form for creating new users. Includes all the required
@@ -27,13 +47,17 @@ class UserCreationForm(forms.ModelForm):
     """
 
     email = forms.EmailField(label='', widget=forms.EmailInput(
-        attrs={'placeholder': 'Email address'}))
+        attrs={'placeholder': 'Email address'}),
+        error_messages={'unique': mark_safe("Email already in use.  <a href=\"/login/\">Forgot Password?</a>")})
 
     username = forms.CharField(label='', widget=forms.TextInput(
-        attrs={'placeholder': 'Username'}))
+        attrs={'placeholder': 'Username'}),
+        error_messages={'unique': 'Account with this username already exists.'})
 
     password1 = forms.CharField(label='', widget=forms.PasswordInput(
-        attrs={'placeholder': 'Password'}))
+        attrs={'placeholder': 'Password'}),
+        error_messages={'invalid': mark_safe("Email already in use.  <a href=\"/login/\">Forgot Password?</a>")})
+
     password2 = forms.CharField(
         label='', widget=forms.PasswordInput(
             attrs={'placeholder': 'Password confirmation'}))
@@ -48,14 +72,17 @@ class UserCreationForm(forms.ModelForm):
 
         # TODO uncomment!
         # Check that the two password entries match
-        # password1 = self.cleaned_data.get("password1")
+        password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
-        # if password1 and password2 and password1 != password2:
-        #     raise forms.ValidationError("Passwords don't match")
-        # try:
-        #     password_validation.validate_password(password2, self.instance)
-        # except forms.ValidationError as error:
-        #     self.add_error('password1', error)
+        try:
+            password_validation.validate_password(password2, self.instance)
+        except forms.ValidationError as error:
+            # self.add_error('password1', error)
+            self.add_error(
+                'password1',  'Password must contain at least 8 characters.')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords do not match.")
+
         return password2
 
     def save(self, commit=True):

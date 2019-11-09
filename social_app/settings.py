@@ -181,3 +181,13 @@ AUTH_USER_MODEL = 'users.MyUser'
 
 # Telling crispy to use bootstrap v.4 as default
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+# Tells Django where to go after successful login,
+# if not specified Django looks for /profile/
+LOGIN_REDIRECT_URL = 'clinic-home'
+
+
+# Tells Django where to go if someone tries to go for a login required view,
+# but he is not logged in, if not specified Django looks for /profile/login
+LOGIN_URL = 'login'

@@ -7,14 +7,14 @@
         {% csrf_token %}
         <fieldset class="form-group mb-1">
             <legend class="border-bottom mb-3 pb-1">JoinToday!</legend>
-            {{form|crispy}}
+            {{ form|crispy }}
         </fieldset>
-        <div class="form-group pt-0 mt-0">
+        <div class="form-group">
             <button class="btn btn-primary" type="submit">Sign Up</button>
         </div>
     </form>
     <div class="border-top pt-1">
-        <small class="">
+        <small class="text-muted">
             Already Have An Account?
             <a class="ml-2" href="">Sign In</a>
         </small>

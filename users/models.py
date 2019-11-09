@@ -22,11 +22,11 @@ class MyUserManager(BaseUserManager):
 
         user.set_password(password)
         user.save(using=self._db)
-        logger.debug('MyUserManager saved new user.')
+        logger.debug('MyUserManager saved a new user.')
         return user
 
     def create_superuser(self, email, username, password):
-        logger.debug('MyUserManager of superuser called!')
+        logger.debug('MyUserManager of a superuser called.')
         user = self.create_user(
             email,
             password=password,
@@ -34,7 +34,7 @@ class MyUserManager(BaseUserManager):
         )
         user.is_admin = True
         user.save(using=self._db)
-        logger.debug('MyUserManager saved new super user.')
+        logger.debug('MyUserManager saved a new superuser.')
         return user
 
 
