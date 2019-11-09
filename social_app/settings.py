@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Local
 
     'users.apps.UsersConfig',
+    'social.apps.SocialConfig',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,42 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '[%(levelname)-8s] -> %(name)s.%(funcName)s ->  %(message)s'
+            # 'format': '%(name)-12s %(levelname)-8s %(message)s'
+        },
+        # 'file': {
+        #     'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s'
+        # }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'console'
+        },
+        # 'file': {
+        #     'level': 'DEBUG',
+        #     'class': 'logging.FileHandler',
+        #     'formatter': 'file',
+        #     'filename': 'debug.log'
+        # }
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['console']
+            # 'handlers': ['console', 'file']
+        }
+    }
+}
 
 
 # Static files (CSS, JavaScript, Images)
