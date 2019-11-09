@@ -2,7 +2,8 @@ import logging
 
 from django import forms
 from django.contrib import admin
-from django.contrib.auth import password_validation
+from django.contrib.auth import (authenticate, get_user_model,
+                                 password_validation)
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
                                        ReadOnlyPasswordHashField)
@@ -11,6 +12,11 @@ from django.forms.widgets import EmailInput, PasswordInput, TextInput
 from django.utils.safestring import mark_safe
 
 from .models import MyUser
+
+# from django.utils.text import capfirst
+
+
+UserModel = get_user_model()
 
 """
 #######################################################
@@ -25,13 +31,39 @@ logger = logging.getLogger(__name__)
 
 class CustomAuthForm(AuthenticationForm):
     """
-    I don't want to have labels on standrad LoginView such as "Email" or "Password"
+    I don't want to have labels on standrad LoginView such as "Email" or "Password",
     so I've created new CustomForm and changed those for empty strings.
+    clean() method overrided, beacuse I didn't like the standard error output.
+    The error was above the fields, I've changed it to be under instead.
     """
     username = forms.CharField(label='', widget=EmailInput(
         attrs={'class': 'validate', 'placeholder': 'Email'}))
     password = forms.CharField(label='', widget=PasswordInput(
         attrs={'placeholder': 'Password'}))
+
+    error_messages = {
+        'invalid_login': 'Incorrect email or  password.',
+        'inactive': "This account is inactive.",
+    }
+
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+
+        if username is not None and password:
+            self.user_cache = authenticate(
+                self.request, username=username, password=password)
+            if self.user_cache is None:
+                # Original method:
+                # raise self.get_invalid_login_error()
+
+                # My custom method
+                self.add_error(
+                    'username', self.error_messages['invalid_login'])
+            else:
+                self.confirm_login_allowed(self.user_cache)
+
+        return self.cleaned_data
 
 
 class CustomPasswordResetForm(PasswordResetForm):
