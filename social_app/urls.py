@@ -13,10 +13,48 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
+
+from users import admin as users_admin
+from users import views as users_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('users.urls')),
+    path('', include('social.urls')),
+    # path('', include('users.urls')),
+    path('register/', users_views.register, name='register'),
+    path('login/',
+         auth_views.LoginView.as_view(
+             template_name='users/login.html',
+             authentication_form=users_admin.CustomAuthForm),
+         name='login'),
+    path('logout/',
+         auth_views.LogoutView.as_view(
+             template_name='users/logout.html'),
+         name='logout'),
+    path('password-reset/',
+         auth_views.PasswordResetView.as_view(
+             template_name='users/password_reset.html'),
+         name='password_reset'),
+    path('password-reset/done/',
+         auth_views.PasswordResetDoneView.as_view(
+             template_name='users/password_reset_done.html'),
+         name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/',  # after pressing button on reset password, Django tries to go to this route but it does not exist, so we are creating it here. It also takes 2 parameters. uidb64 and token which ensures that person who is calling it is actually that person.
+         auth_views.PasswordResetConfirmView.as_view(
+             template_name='users/password_reset_confirm.html'),
+         name='password_reset_confirm'),
+    path('password-reset-complete/',
+         auth_views.PasswordResetCompleteView.as_view(
+             template_name='users/password_reset_complete.html'),
+         name='password_reset_complete'),
 ]
+
+# https://docs.djangoproject.com/en/2.1/howto/static-files/#serving-files-uploaded-by-a-user-during-development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

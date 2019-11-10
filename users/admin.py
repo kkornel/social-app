@@ -1,5 +1,6 @@
 import logging
 
+import requests as req
 from django import forms
 from django.contrib import admin
 from django.contrib.auth import (authenticate, get_user_model,
@@ -12,9 +13,6 @@ from django.forms.widgets import EmailInput, PasswordInput, TextInput
 from django.utils.safestring import mark_safe
 
 from .models import MyUser
-
-# from django.utils.text import capfirst
-
 
 UserModel = get_user_model()
 
@@ -88,15 +86,25 @@ class UserCreationForm(forms.ModelForm):
 
     password1 = forms.CharField(label='', widget=forms.PasswordInput(
         attrs={'placeholder': 'Password'}),
-        error_messages={'invalid': mark_safe("Email already in use.  <a href=\"/login/\">Forgot Password?</a>")})
+        error_messages={'invalid': mark_safe("Email already in use.  <a href=\"/password_reset/\">Forgot Password?</a>")})
 
     password2 = forms.CharField(
         label='', widget=forms.PasswordInput(
             attrs={'placeholder': 'Password confirmation'}))
 
+    # captcha = ReCaptchaField(
+    #     widget=ReCaptchaV2Checkbox(
+    #         attrs={
+    #             'data-theme': 'dark',
+    #             'data-tabindex': 3,
+    #         }
+    #     )
+    # )
+
     class Meta:
         model = MyUser
         fields = ('email', 'username')
+
 
     def clean_password2(self):
         logger.debug('Clean password running...')
@@ -104,16 +112,16 @@ class UserCreationForm(forms.ModelForm):
 
         # TODO uncomment!
         # Check that the two password entries match
-        password1 = self.cleaned_data.get("password1")
+        # password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
-        try:
-            password_validation.validate_password(password2, self.instance)
-        except forms.ValidationError as error:
-            # self.add_error('password1', error)
-            self.add_error(
-                'password1',  'Password must contain at least 8 characters.')
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords do not match.")
+        # try:
+        # password_validation.validate_password(password2, self.instance)
+        # except forms.ValidationError as error:
+        # self.add_error('password1', error)
+        # self.add_error(
+        # 'password1',  'Password must contain at least 8 characters.')
+        # if password1 and password2 and password1 != password2:
+        # raise forms.ValidationError("Passwords do not match.")
 
         return password2
 

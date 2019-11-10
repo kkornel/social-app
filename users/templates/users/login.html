@@ -3,27 +3,27 @@
 
 
 {% block content %}
-<div class="col-sm-6 offset-sm-3 text-center">
-    <form method="POST">
-        {% csrf_token %}
-        <fieldset class="form-group mb-0">
-            <legend class="border-bottom mb-3 pb-1">Log In</legend>
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group mb-2">
-            <button class="btn btn-primary" type="submit">Login</button>
-        </div>
-        <div class="mb-1">
+    <div class="col-sm-6 offset-sm-3 text-center">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group mb-0">
+                <legend class="border-bottom mb-3 pb-1">Log In</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group mb-2">
+                <button class="btn btn-primary" type="submit">Login</button>
+            </div>
+            <div class="mb-1">
+                <small class="text-muted">
+                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                </small>
+            </div>
+        </form>
+        <div class="border-top pt-1">
             <small class="text-muted">
-                <a href="">Forgot Password?</a>
+                Need An Account?
+                <a class="ml-2" href="{% url 'register' %}">Sign Up Now</a>
             </small>
         </div>
-    </form>
-    <div class="border-top pt-1">
-        <small class="text-muted">
-            Need An Account?
-            <a class="ml-2" href="">Sign Up Now</a>
-        </small>
     </div>
-</div>
 {% endblock content %}
