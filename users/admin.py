@@ -79,8 +79,8 @@ class UserCreationForm(forms.ModelForm):
         error_messages={'unique': 'Account with this username already exists.'})
 
     password1 = forms.CharField(label='', widget=forms.PasswordInput(
-        attrs={'placeholder': 'Password'}),
-        error_messages={'invalid': mark_safe("Email already in use.  <a href=\"/password_reset/\">Forgot Password?</a>")})
+        attrs={'placeholder': 'Password'}))
+        # error_messages={'invalid': mark_safe("Email already in use.  <a href=\"/password_reset/\">Forgot Password?</a>")})
 
     password2 = forms.CharField(
         label='', widget=forms.PasswordInput(
@@ -101,13 +101,14 @@ class UserCreationForm(forms.ModelForm):
         # password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         # try:
-        # password_validation.validate_password(password2, self.instance)
+        #     password_validation.validate_password(password2, self.instance)
         # except forms.ValidationError as error:
-        # self.add_error('password1', error)
-        # self.add_error(
-        # 'password1',  'Password must contain at least 8 characters.')
+        #     # ! The one below should stay commented, because it is default one from Django. 
+        #     # self.add_error('password1', error)
+        #     self.add_error(
+        #         'password1',  'Password must contain at least 8 characters.')
         # if password1 and password2 and password1 != password2:
-        # raise forms.ValidationError("Passwords do not match.")
+        #     raise forms.ValidationError("Passwords do not match.")
 
         return password2
 
