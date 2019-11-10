@@ -20,6 +20,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from users import admin as users_admin
+from users import forms as users_forms
 from users import views as users_views
 
 urlpatterns = [
@@ -36,10 +37,13 @@ urlpatterns = [
          auth_views.LogoutView.as_view(
              template_name='users/logout.html'),
          name='logout'),
-    path('password-reset/',
-         auth_views.PasswordResetView.as_view(
-             template_name='users/password_reset.html'),
+    path('password-reset/', users_views.reset_password,
          name='password_reset'),
+    # path('password-reset/',
+        #  auth_views.PasswordResetView.as_view(
+            #  template_name='users/password_reset.html',
+            #  form_class=users_forms.CaptchaPasswordResetForm,),
+        #  name='password_reset'),
     path('password-reset/done/',
          auth_views.PasswordResetDoneView.as_view(
              template_name='users/password_reset_done.html'),
