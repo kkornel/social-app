@@ -1,10 +1,7 @@
 import logging
 
-import requests
 from django.contrib import messages
 from django.shortcuts import redirect, render
-
-from social_app import settings
 
 from .admin import UserCreationForm
 from .decorators import check_recaptcha
@@ -23,10 +20,11 @@ def register(request):
         logger.debug(f"password2: {request.POST['password2']}")
         if form.is_valid() and request.recaptcha_is_valid:
             logger.debug('Form valid')
-            form.save()
-            username = form.cleaned_data.get('username')
+            # TODO: Uncomment in order to save new users.
+            # form.save()
+            email = form.cleaned_data.get('email')
             messages.success(
-                request, f'Your account has been created! You are now able to log in.')
+                request, f'Account for {email} has been created! You are now able to log in.')
             return redirect('login')
         else:
             logger.debug('Form not valid')
@@ -41,18 +39,27 @@ def reset_password(request):
         form = CaptchaPasswordResetForm(request.POST)
         if form.is_valid() and request.recaptcha_is_valid:
             logger.debug('Form valid')
-            form.save(from_email='blabla@blabla.com',
-                      html_email_template_name='users/password_reset_email.html', request=request, domain_override="aaaa", use_https=True, subject_template_name='users/password_reset_subject.txt')
-            messages.success(request, 'New comment added with success!')
+
+            # * Different parameters:
+            # form.save(from_email='blabla@blabla.com',
+            #           email_template_name='',
+            #           html_email_template_name='users/password_reset_email.html',
+            #           request=request,
+            #           domain_override="aaaa",
+            #           use_https=True,
+            #           subject_template_name='users/password_reset_subject.txt')
+
+            form.save(request=request,
+                      html_email_template_name='users/password_reset_email.html',
+                      subject_template_name='users/password_reset_email_subject.txt')
+
+            # ? I think it is not nessccary.
             # user = form.save()
             # update_session_auth_hash(request, user)
-            # messages.success(request, _(
-            # 'Your password was successfully updated!'))
+
             return redirect('password_reset_done')
         else:
-            messages.error(request, ('Please correct the error below.'))
+            logger.debug('Form not valid')
     else:
         form = CaptchaPasswordResetForm()
-    return render(request, 'users/password_reset.html', {
-        'form': form
-    })
+    return render(request, 'users/password_reset.html', {'form': form})

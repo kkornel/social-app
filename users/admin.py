@@ -64,12 +64,6 @@ class CustomAuthForm(AuthenticationForm):
         return self.cleaned_data
 
 
-class CustomPasswordResetForm(PasswordResetForm):
-    username = forms.CharField(label='', widget=EmailInput(
-        attrs={'class': 'validate', 'placeholder': 'Email'}))
-    # captcha = ReCa
-
-
 class UserCreationForm(forms.ModelForm):
     """
     A form for creating new users. Includes all the required
@@ -92,14 +86,6 @@ class UserCreationForm(forms.ModelForm):
         label='', widget=forms.PasswordInput(
             attrs={'placeholder': 'Password confirmation'}))
 
-    # captcha = ReCaptchaField(
-    #     widget=ReCaptchaV2Checkbox(
-    #         attrs={
-    #             'data-theme': 'dark',
-    #             'data-tabindex': 3,
-    #         }
-    #     )
-    # )
 
     class Meta:
         model = MyUser
@@ -110,7 +96,7 @@ class UserCreationForm(forms.ModelForm):
         logger.debug('Clean password running...')
         logger.debug('### Uncomment later!')
 
-        # TODO uncomment!
+        # TODO: uncomment later. In order to validate passwords!
         # Check that the two password entries match
         # password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
