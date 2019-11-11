@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -46,9 +47,23 @@ class MyUser(AbstractBaseUser):
     )
 
     username = models.CharField(max_length=20, unique=True)
+    last_login = models.DateTimeField('last login', blank=True, null=True)
 
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(
+        'admin status',
+        default=False,
+        help_text=(
+            'Designates whether the user can log into this admin site.'),
+    )
+    is_active = models.BooleanField(
+        'active',
+        default=True,
+        help_text=(
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
+        ),
+    )
+    date_joined = models.DateTimeField('date joined', default=timezone.now)
 
     objects = MyUserManager()
 

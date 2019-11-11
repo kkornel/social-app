@@ -105,11 +105,9 @@ class UserCreationForm(forms.ModelForm):
         label='', widget=forms.PasswordInput(
             attrs={'placeholder': 'Password confirmation'}))
 
-
     class Meta:
         model = MyUser
         fields = ('email', 'username')
-
 
     def clean_password2(self):
         logger.debug('Clean password running...')
@@ -122,7 +120,7 @@ class UserCreationForm(forms.ModelForm):
         # try:
         #     password_validation.validate_password(password2, self.instance)
         # except forms.ValidationError as error:
-        #     # ! The one below should stay commented, because it is default one from Django. 
+        #     # ! The one below should stay commented, because it is default one from Django.
         #     # self.add_error('password1', error)
         #     self.add_error(
         #         'password1',  'Password must contain at least 8 characters.')
@@ -171,11 +169,12 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
     list_display = ('email', 'username', 'is_admin')
-    list_filter = ('is_admin',)
+    list_filter = ('is_admin', 'is_active',)
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
         ('Personal info', {'fields': ()}),
-        ('Permissions', {'fields': ('is_admin',)}),
+        ('Permissions', {'fields': ('is_active', 'is_admin',)}),
+        ('Important dates', {'fields': ('last_login', 'date_joined',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
@@ -185,7 +184,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('email', 'username', 'password1', 'password2')}
          ),
     )
-    search_fields = ('email',)
+    search_fields = ('email', 'username')
     ordering = ('email',)
     filter_horizontal = ()
 
