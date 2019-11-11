@@ -27,6 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('social.urls')),
     path('register/', users_views.register, name='register'),
+    path('activate/<uidb64>/<token>/',
+         users_views.activate_account, name='activate'),
     path('login/',
          auth_views.LoginView.as_view(
              template_name='users/login.html',
@@ -63,6 +65,7 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(
              template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
+
 ]
 
 # https://docs.djangoproject.com/en/2.1/howto/static-files/#serving-files-uploaded-by-a-user-during-development

@@ -51,6 +51,8 @@ class CustomAuthForm(AuthenticationForm):
         if username is not None and password:
             self.user_cache = authenticate(
                 self.request, username=username, password=password)
+            logger.debug(self.user_cache.is_active)
+
             if self.user_cache is None:
                 # Original method:
                 # raise self.get_invalid_login_error()
