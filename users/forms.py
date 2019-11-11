@@ -17,9 +17,9 @@ class CustomSetPasswordForm(SetPasswordForm):
     A form that lets a user change set their password without entering the old
     password
     """
-    new_password1 = forms.CharField(label='', widget=forms.PasswordInput(
-        attrs={'placeholder': 'New password'}))
-    # error_messages={'invalid': mark_safe("Email already in use.  <a href=\"/password_reset/\">Forgot Password?</a>")})
+    new_password1 = forms.CharField(
+        label='', widget=forms.PasswordInput(
+            attrs={'placeholder': 'New password'}))
 
     new_password2 = forms.CharField(
         label='', widget=forms.PasswordInput(

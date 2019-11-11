@@ -2,7 +2,7 @@ import logging
 
 import requests as req
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth import (authenticate, get_user_model,
                                  password_validation)
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -34,14 +34,17 @@ class CustomAuthForm(AuthenticationForm):
     clean() method overrided, beacuse I didn't like the standard error output.
     The error was above the fields, I've changed it to be under instead.
     """
-    username = forms.CharField(label='', widget=EmailInput(
-        attrs={'class': 'validate', 'placeholder': 'Email'}))
-    password = forms.CharField(label='', widget=PasswordInput(
-        attrs={'placeholder': 'Password'}))
+    username = forms.CharField(
+        label='', widget=EmailInput(
+            attrs={'class': 'validate', 'placeholder': 'Email'}))
+    password = forms.CharField(
+        label='', widget=PasswordInput(
+            attrs={'placeholder': 'Password'}))
 
     error_messages = {
         'invalid_login': 'Incorrect email or  password.',
         'inactive': "This account is inactive.",
+        'custom_inactive': "This account is inactive. Unconfirmed email?",
     }
 
     def clean(self):
@@ -49,17 +52,29 @@ class CustomAuthForm(AuthenticationForm):
         password = self.cleaned_data.get('password')
 
         if username is not None and password:
+            # Even if user is registred, but he did not confirm email,
+            # this method returns None, so I cannot check if self.user_cache.is_active,
+            # so I have to get user manually from DB and check by myself.
+            # I do it so in if statement under.
             self.user_cache = authenticate(
                 self.request, username=username, password=password)
-            logger.debug(self.user_cache.is_active)
 
             if self.user_cache is None:
                 # Original method:
                 # raise self.get_invalid_login_error()
 
-                # My custom method
-                self.add_error(
-                    'username', self.error_messages['invalid_login'])
+                try:
+                    user = MyUser.objects.get(email=username)
+                except:
+                    user = None
+
+                if user is not None and not user.is_active:
+                    self.add_error(
+                        'username', self.error_messages['custom_inactive'])
+                else:
+                    # My custom method
+                    self.add_error(
+                        'username', self.error_messages['invalid_login'])
             else:
                 self.confirm_login_allowed(self.user_cache)
 
@@ -72,17 +87,19 @@ class UserCreationForm(forms.ModelForm):
     fields, plus a repeated password.
     """
 
-    email = forms.EmailField(label='', widget=forms.EmailInput(
-        attrs={'placeholder': 'Email address'}),
+    email = forms.EmailField(
+        label='', widget=forms.EmailInput(
+            attrs={'placeholder': 'Email address'}),
         error_messages={'unique': mark_safe("Email already in use.  <a href=\"/login/\">Forgot Password?</a>")})
 
-    username = forms.CharField(label='', widget=forms.TextInput(
-        attrs={'placeholder': 'Username'}),
+    username = forms.CharField(
+        label='', widget=forms.TextInput(
+            attrs={'placeholder': 'Username'}),
         error_messages={'unique': 'Account with this username already exists.'})
 
-    password1 = forms.CharField(label='', widget=forms.PasswordInput(
-        attrs={'placeholder': 'Password'}))
-        # error_messages={'invalid': mark_safe("Email already in use.  <a href=\"/password_reset/\">Forgot Password?</a>")})
+    password1 = forms.CharField(
+        label='', widget=forms.PasswordInput(
+            attrs={'placeholder': 'Password'}))
 
     password2 = forms.CharField(
         label='', widget=forms.PasswordInput(
@@ -116,7 +133,7 @@ class UserCreationForm(forms.ModelForm):
 
     def save(self, commit=True):
         logger.debug(
-            "Save form (should never run, because I'm saving using user.save())")
+            "Save form (should never run, because I'm saving using user.save()) ? After email confirmation it should run i think ")
 
         # Save the provided password in hashed format
         user = super().save(commit=False)
