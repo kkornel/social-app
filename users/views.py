@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage, send_mail
 from django.shortcuts import redirect, render
@@ -9,7 +10,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from .admin import UserCreationForm
-from .decorators import check_recaptcha
+from .decorators import check_recaptcha, func_log
 from .forms import CaptchaPasswordResetForm
 from .models import MyUser
 from .tokens import account_activation_token
@@ -17,6 +18,7 @@ from .tokens import account_activation_token
 logger = logging.getLogger(__name__)
 
 
+@func_log
 @check_recaptcha
 def register(request):
     if request.method == 'POST':
@@ -63,7 +65,8 @@ def register(request):
                 html_message=message
             )
 
-            messages.info(request, f'Confirmation email has been sent to {to_email}')
+            messages.info(
+                request, f'Confirmation email has been sent to {to_email}')
             return redirect('login')
         else:
             logger.debug('Form not valid')
@@ -130,3 +133,29 @@ def reset_password(request):
     else:
         form = CaptchaPasswordResetForm()
     return render(request, 'users/password_reset.html', {'form': form})
+
+
+@login_required
+def profile(request):
+    # if request.method == "POST":
+    #     user_form = UserUpdateForm(request.POST, instance=request.user)
+    #     profile_form = ProfileUpdateForm(
+    #         request.POST, request.FILES, instance=request.user.profile)
+
+    #     if user_form.is_valid() and profile_form.is_valid():
+    #         user_form.save()
+    #         profile_form.save()
+    #         messages.success(request, f'Your account has been updated!')
+    #         return redirect('profile')
+
+    # else:
+    #     user_form = UserUpdateForm(instance=request.user)
+    #     profile_form = ProfileUpdateForm(instance=request.user.profile)
+
+    # context = {
+    #     'user_form': user_form,
+    #     'profile_form': profile_form,
+    # }
+    context = {}
+
+    return render(request, 'users/profile.html', context)

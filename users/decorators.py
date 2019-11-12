@@ -32,6 +32,16 @@ def check_recaptcha(view_func):
                 request.recaptcha_is_valid = True
             else:
                 request.recaptcha_is_valid = False
-                messages.error(request, 'Invalid reCAPTCHA. Please try again.', extra_tags='danger')
+                messages.error(
+                    request, 'Invalid reCAPTCHA. Please try again.', extra_tags='danger')
         return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+
+def func_log(orig_func):
+    @wraps(orig_func)
+    def _wrappper(*args, **kwargs):
+        logger.info(
+            f'{orig_func.__name__} ran with args: {args}, and kwargs: {kwargs}')
+        return orig_func(*args, **kwargs)
+    return _wrappper

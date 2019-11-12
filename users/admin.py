@@ -12,7 +12,7 @@ from django.contrib.auth.models import Group
 from django.forms.widgets import EmailInput, PasswordInput, TextInput
 from django.utils.safestring import mark_safe
 
-from .models import MyUser
+from .models import MyUser, Profile
 
 UserModel = get_user_model()
 
@@ -194,3 +194,6 @@ admin.site.register(MyUser, UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
+
+
+admin.site.register(Profile)

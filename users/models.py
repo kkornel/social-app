@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
 from django.utils import timezone
 
+# from PIL import Image
 logger = logging.getLogger(__name__)
 
 
@@ -94,3 +95,50 @@ class MyUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    bio = models.CharField(max_length=300)
+    city = models.CharField(max_length=100)
+    website = models.CharField(max_length=40)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
+
+    """ Resizing images on local storage """
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     logger.debug(self.image.path)
+    #     img = Image.open(self.image.path)
+    #     logger.debug(self.image.path)
+
+    #     if img.height > 300 or img.width > 300:
+    #         output_size = (300, 300)
+    #         img.thumbnail(output_size)
+    #         logger.debug(self.image.path)
+    #         img.save(self.image.path)
+
+    """ Resizing images on S3 """
+
+    # def save(self, *args, **kwargs):
+    #         super().save(*args, **kwargs)
+    #         logger.debug("Saving image!")
+    #         img_read = storage.open(self.image.name, 'r')
+    #         logger.debug(img_read)
+    #         img = Image.open(img_read)
+    #         logger.debug(img)
+
+    #         if img.height > 300 or img.width > 300:
+    #             logger.debug("Resizing!")
+    #             output_size = (300, 300)
+    #             img.thumbnail(output_size)
+    #             in_mem_file = io.BytesIO()
+    #             img.save(in_mem_file, format='JPEG')
+    #             img_write = storage.open(self.image.name, 'w+')
+    #             img_write.write(in_mem_file.getvalue())
+    #             img_write.close()
+    #             logger.debug("Resized successfully!")
+
+    #         img_read.close()
