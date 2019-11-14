@@ -26,6 +26,10 @@ from users import views as users_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('social.urls')),
+
+    # REST FRAMEWORK URLS
+    path('api/users/', include('users.api.urls')),
+
     path('register/', users_views.register, name='register'),
     path('activate/<uidb64>/<token>/',
          users_views.activate_account, name='activate'),

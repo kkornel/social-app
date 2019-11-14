@@ -1,3 +1,8 @@
 body {
-    /* background-color: red; */
+    background-color: red;
+}
+
+.bg-steel {
+  background-color: #5f788a;
+  /* background-color: #435563; */
 }

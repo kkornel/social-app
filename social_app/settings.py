@@ -35,7 +35,7 @@ SECRET_KEY = os.environ.get('SECRET_SOCIAL_APP_KEY')
 # DEBUG = True
 DEBUG = (os.environ.get('DEBUG_VARIABLE') == "True")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.0.199', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -50,6 +50,8 @@ INSTALLED_APPS = [
 
     # 3rd party
     'crispy_forms',
+    'rest_framework',
+    'rest_framework.authtoken',
 
     # Local
     'users.apps.UsersConfig',
@@ -226,3 +228,12 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
