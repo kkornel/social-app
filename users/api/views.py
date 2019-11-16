@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.decorators import func_log
-from users.models import Profile
+from users.models import MyUser, Profile
 
 from .serializers import ProfileSerializer, RegistrationSerializer
 
@@ -80,15 +80,37 @@ class ProfilePostListCreateView(generics.ListAPIView):
     queryset = Profile.objects.all()
 
 
+class ApiProfileView(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    @func_log
+    def get(self, request, token, *args, **kwargs):
+        print(token)
+        print(request)
+        print(request.data)
+
+        qs = Profile.objects.all()
+        serializer = ProfileSerializer(qs, many=True)
+        return Response(serializer.data)
+
+
 class TestView(APIView):
 
     permission_classes = (IsAuthenticated, )
 
-    @func_log
     def get(self, request, *args, **kwargs):
-        qs = Profile.objects.all()
-        serializer = ProfileSerializer(qs, many=True)
-        return Response(serializer.data)
+        logger.debug(request.user)
+        logger.debug(request.auth)
+
+        profile = Profile.objects.get(user=request.user)
+        serializer = ProfileSerializer(profile)
+
+        response = serializer.data.copy()
+        response['username'] = request.user.username
+        response['email'] = request.user.email
+        del response['user']
+        return Response(response)
+        # return Response(serializer.data)
 
     @func_log
     def post(self, request, *args, **kwargs):

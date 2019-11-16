@@ -1,4 +1,6 @@
 import logging
+import os
+import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
@@ -6,11 +8,22 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-
+from PIL import Image
 from rest_framework.authtoken.models import Token
 
-# from PIL import Image
 logger = logging.getLogger(__name__)
+
+logging.getLogger('boto3').setLevel(logging.CRITICAL)
+logging.getLogger('PIL').setLevel(logging.CRITICAL)
+logging.getLogger('botocore').setLevel(logging.CRITICAL)
+logging.getLogger('s3transfer').setLevel(logging.CRITICAL)
+logging.getLogger('urllib3').setLevel(logging.CRITICAL)
+
+
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('profile_pics/', filename)
 
 
 class MyUserManager(BaseUserManager):
@@ -107,23 +120,24 @@ class Profile(models.Model):
     bio = models.CharField(max_length=300)
     city = models.CharField(max_length=100)
     website = models.CharField(max_length=40)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    image = models.ImageField(default='default.jpg', upload_to=get_file_path)
 
     def __str__(self):
         return f'{self.user.username} Profile'
 
     """ Resizing images on local storage """
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #     logger.debug(self.image.path)
-    #     img = Image.open(self.image.path)
-    #     logger.debug(self.image.path)
 
-    #     if img.height > 300 or img.width > 300:
-    #         output_size = (300, 300)
-    #         img.thumbnail(output_size)
-    #         logger.debug(self.image.path)
-    #         img.save(self.image.path)
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        logger.debug(self.image.path)
+        img = Image.open(self.image.path)
+        logger.debug(self.image.path)
+
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            logger.debug(self.image.path)
+            img.save(self.image.path)
 
     """ Resizing images on S3 """
 

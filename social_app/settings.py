@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_auth',
 
     # Local
     'users.apps.UsersConfig',
@@ -151,7 +152,10 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'console': {
-            'format': '[%(levelname)-8s] -> %(name)s.%(funcName)s ->  %(message)s'
+            'format': '[%(levelname)s] [%(asctime)s] [%(name)s.%(funcName)s] ->  %(message)s',
+            # 'format': '[%(levelname)s: %(asctime)s] -> %(name)s.%(funcName)s() ->  %(message)s',
+            # 'format': '[ %(levelname)-8s] -> %(name)s.%(funcName)s ->  %(message)s',
+            'datefmt': '%H:%M:%S',
             # 'format': '%(name)-12s %(levelname)-8s %(message)s'
         },
         # 'file': {

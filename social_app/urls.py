@@ -29,6 +29,8 @@ urlpatterns = [
 
     # REST FRAMEWORK URLS
     path('api/users/', include('users.api.urls')),
+    # django.rest.auth
+    path('rest-auth/', include('rest_auth.urls')),
 
     path('register/', users_views.register, name='register'),
     path('activate/<uidb64>/<token>/',

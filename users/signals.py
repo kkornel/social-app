@@ -8,6 +8,11 @@ from .models import MyUser, Profile
 
 logger = logging.getLogger(__name__)
 
+logging.getLogger('boto3').setLevel(logging.CRITICAL)
+logging.getLogger('botocore').setLevel(logging.CRITICAL)
+logging.getLogger('s3transfer').setLevel(logging.CRITICAL)
+logging.getLogger('urllib3').setLevel(logging.CRITICAL)
+
 
 @func_log
 @receiver(post_save, sender=MyUser)

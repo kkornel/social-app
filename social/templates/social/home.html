@@ -1,12 +1,54 @@
 {% extends 'social/base.html' %}
 
-
 {% block content %}
-<div class="col-md-8">
-    <h1>{{ user }}</h1>
+<div class="col-md-7 offset-sm-1 my-main-column pr-0 pl-0">
+    <!-- <div class="offset-sm-2 bg-steel"> -->
 
-    {% if user.is_authenticated %}
-    <a href="{% url 'logout' %}">Logout</a>
-    {% endif %}
+    <div class="my-horizontal-bar"></div>
+
+    {% for post in posts %}
+
+    <div onclick="location.href='login';" style="cursor: pointer; "
+        onmouseover="this.getElementsByClassName('my-post')[0].style.backgroundColor = '#15181c';""
+        onmouseout="this.getElementsByClassName('my-post')[0].style.backgroundColor = 'black';">
+
+        <article class="media my-post">
+
+            <a href="author"><img class="rounded-circle post-author-img" src="{{ post.author.profile.image.url }}"></a>
+            
+            <div class="media-body">
+
+                <div class="post-metadata">
+                    <a class="post-author-name mr-2" href="username">{{ post.author.username }}</a>
+                    <a class="post-metadata-text mr-2" href="location">{{ post.location }}</a>
+                    <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span>
+                </div>
+
+                <p class="article-content post-content">{{ post.content }}</p>
+
+                <img class="post-image" src="{{ post.image.url }}">
+
+                <div class="post-likes-panel">
+                    <div class="aligin-right">
+                        <div class="row">
+                            <div>
+                                <a href="likes" class="post-stats col-sec mr-2"><small>Likes: 123</small></a>
+                                <a href="comments" class="post-stats col-sec mr-2"><small>Comments: 121</small></a>
+                            </div>
+                            <div>
+                                <a href="heart" class="heart"><i class="far fa-heart"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </article>
+    </div>
+
+    <div class="my-horizontal-bar"></div>
+
+    {% endfor %}
+
 </div>
 {% endblock content %}
