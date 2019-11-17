@@ -5,6 +5,7 @@ import os
 import uuid
 from datetime import date
 
+from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.utils import timezone
 from PIL import Image
@@ -52,10 +53,12 @@ class Post(models.Model):
     # It is done by ForeginKey.
     # on_delete means what happens when user is deleted, CASCADE means delete all his posts.
     author = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    content = models.CharField(max_length=280)
+    content = models.TextField(max_length=280,
+                               validators=[MaxLengthValidator(280)])
+    # content = models.CharField(max_length=280)
     date_posted = models.DateTimeField(default=timezone.now)
-    location = models.CharField(max_length=40)
-    image = models.ImageField(upload_to=get_file_path)
+    location = models.CharField(max_length=40, blank=True)
+    image = models.ImageField(upload_to=get_file_path, blank=True)
 
     """ Resizing images on local storage """
 

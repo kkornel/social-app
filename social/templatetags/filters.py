@@ -10,6 +10,10 @@ register = template.Library()
 
 logger = logging.getLogger(__name__)
 
+'''
+https://docs.djangoproject.com/en/2.2/howto/custom-template-tags/
+'''
+
 
 @func_log
 def generate_link(link):
@@ -38,7 +42,7 @@ def render_content(obj):
 
     return mark_safe(re.sub(r"(https?://[^\s]+)",
                             lambda m: generate_link(m.group(1)), text))
-# return re.sub(r"(?P<url>https?://[^\s]+)", lambda m: generate_link(m.group(1)), text)
+    # return re.sub(r"(?P<url>https?://[^\s]+)", lambda m: generate_link(m.group(1)), text)
 
 
 # @func_log
@@ -49,4 +53,4 @@ def generate_links(link):
     #                         lambda m: generate_link(m.group(1)), link))
 
 
-register.filter('render_content', render_content)
+# register.filter('render_content', render_content)
