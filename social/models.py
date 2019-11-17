@@ -1,3 +1,4 @@
+import datetime
 import io
 import logging
 import os
@@ -17,6 +18,33 @@ def get_file_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
     return os.path.join('posts_images/', filename)
+
+
+def prettydate(d):
+    if d is not None:
+        logger.debug(d)
+        diff = timezone.now() - d
+        s = diff.seconds
+        if diff.days > 30 or diff.days < 0:
+            return d.strftime('Y-m-d H:i')
+        elif diff.days == 1:
+            return 'One day ago'
+        elif diff.days > 1:
+            return '{} days ago'.format(diff.days)
+        elif s <= 1:
+            return 'just now'
+        elif s < 60:
+            return '{} seconds ago'.format(s)
+        elif s < 120:
+            return 'one minute ago'
+        elif s < 3600:
+            return '{} minutes ago'.format(round(s/60))
+        elif s < 7200:
+            return 'one hour ago'
+        else:
+            return '{} hours ago'.format(round(s/3600))
+    else:
+        return None
 
 
 class Post(models.Model):
@@ -41,3 +69,6 @@ class Post(models.Model):
             img.thumbnail(output_size)
             logger.debug(self.image.path)
             img.save(self.image.path)
+
+    def pretty_published_date(self):
+        return prettydate(self.date_posted)

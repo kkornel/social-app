@@ -1,5 +1,5 @@
 {% extends 'social/base.html' %}
-
+{% load filters %}
 {% block content %}
 <div class="col-md-7 offset-sm-1 my-main-column pr-0 pl-0">
     <!-- <div class="offset-sm-2 bg-steel"> -->
@@ -10,21 +10,22 @@
 
     <div onclick="location.href='login';" style="cursor: pointer; "
         onmouseover="this.getElementsByClassName('my-post')[0].style.backgroundColor = '#15181c';""
-        onmouseout="this.getElementsByClassName('my-post')[0].style.backgroundColor = 'black';">
+        onmouseout=" this.getElementsByClassName('my-post')[0].style.backgroundColor='black' ;">
 
         <article class="media my-post">
 
             <a href="author"><img class="rounded-circle post-author-img" src="{{ post.author.profile.image.url }}"></a>
-            
+
             <div class="media-body">
 
                 <div class="post-metadata">
                     <a class="post-author-name mr-2" href="username">{{ post.author.username }}</a>
                     <a class="post-metadata-text mr-2" href="location">{{ post.location }}</a>
-                    <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span>
+                    <!-- <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span> -->
+                    <span class="post-metadata-text">{{ post.pretty_published_date }}</span>
                 </div>
 
-                <p class="article-content post-content">{{ post.content }}</p>
+                <p class="article-content post-content">{{ post.content|render_content }}</p>
 
                 <img class="post-image" src="{{ post.image.url }}">
 
@@ -32,11 +33,15 @@
                     <div class="aligin-right">
                         <div class="row">
                             <div>
-                                <a href="likes" class="post-stats col-sec mr-2"><small>Likes: 123</small></a>
-                                <a href="comments" class="post-stats col-sec mr-2"><small>Comments: 121</small></a>
+                                <!-- <a href="likes" class="comment col-sec mr-2"><small>Likes: 123</small></a> -->
+                                <a href="comments" class=" hvr-icon-wobble-horizontal comment col-sec mr-2"><i
+                                        class="far fa-comment hvr-icon"></i>
+                                    <small>121</small></a>
                             </div>
                             <div>
-                                <a href="heart" class="heart"><i class="far fa-heart"></i></a>
+                                <a href="heart" class="heart hvr-icon-pulse-shrink"><i
+                                        class="far fa-heart hvr-icon"></i><small class="heart-humber">
+                                        123</small></a>
                             </div>
                         </div>
                     </div>
