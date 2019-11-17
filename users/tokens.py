@@ -3,12 +3,11 @@ from django.utils import six
 
 
 """
-Django has internal APIs for creating One Time Link with user details. 
+Django has internal APIs for creating One Time Link with users details. 
 PasswordResetTokenGenerator API is used for generating token. 
-We will extend PasswordResetTokenGenerator with our class to generate a unique token. 
-This will make use of your SECRET_KEY of your project.
+Extend PasswordResetTokenGenerator to generate a unique token. 
+This will make use of SECRET_KEY of current project.
 """
-
 
 class TokenGenerator(PasswordResetTokenGenerator):
     def _make_hash_value(self, user, timestamp):

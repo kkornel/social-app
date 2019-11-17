@@ -1,0 +1,51 @@
+{% extends 'social/base.html' %}
+
+
+{% block base_content %}
+<article class="media my-post">
+
+    <img class="rounded-circle post-author-img" src="{{ post.author.profile.image.url }}">
+
+    <div class="media-body">
+
+        <div class="post-metadata">
+            <a class="post-author-name mr-2" href="username">{{ post.author.username }}</a>
+            <a class="post-metadata-text mr-2" href="location">{{ post.location }}</a>
+            <!-- <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span> -->
+            <span class="post-metadata-text">{{ post.pretty_published_date }}</span>
+        </div>
+
+        <p class="article-content post-content">{{ post.content }}</p>
+
+        {% if post.author == user %}
+        <div>
+            <a class="btn btn-secondary btn-sm tm-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+            <a class="btn btn-danger btn-sm tm-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+        </div>
+        {% endif%}
+
+        {% if post.image %}
+        <img class="post-image" src="{{ post.image.url }}">
+        {% endif %}
+
+        <div class="post-likes-panel">
+            <div class="aligin-right">
+                <div class="row">
+                    <div>
+                        <!-- <a href="likes" class="comment col-sec mr-2"><small>Likes: 123</small></a> -->
+                        <a href="comments" class=" hvr-icon-wobble-horizontal comment col-sec mr-2"><i
+                                class="far fa-comment hvr-icon"></i>
+                            <small>121</small></a>
+                    </div>
+                    <div>
+                        <a href="heart" class="heart hvr-icon-pulse-shrink"><i class="far fa-heart hvr-icon"></i><small
+                                class="heart-humber">
+                                123</small></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</article>
+{% endblock base_content %}

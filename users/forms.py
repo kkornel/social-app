@@ -15,9 +15,8 @@ class CaptchaPasswordResetForm(PasswordResetForm):
 
 class CustomSetPasswordForm(SetPasswordForm):
     """
-    Custom SetPasswordForm  only for styling Password fields.
-    A form that lets a user change set their password without entering the old
-    password
+    Custom SetPasswordForm only for styling Password fields.
+    A form that lets user set password without entering the old one.
     """
     new_password1 = forms.CharField(
         label='', widget=forms.PasswordInput(

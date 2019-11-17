@@ -1,11 +1,17 @@
-{% extends 'social/base_sidebar.html' %}
+{% extends 'social/base.html' %}
 {% load crispy_forms_tags %}
 
-{% block content %}
+{% block base_content %}
 <div class="col-md-8">
-    <form method="post">{% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" value="Save">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Profile info</legend>
+            {{ form|crispy }}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Update</button>
+        </div>
     </form>
 </div>
-{% endblock content %}
+{% endblock base_content %}

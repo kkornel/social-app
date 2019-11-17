@@ -1,56 +1,71 @@
+import datetime
 import logging
 import re
+from datetime import date
 
 from django import template
+from django.utils import timezone
 from django.utils.safestring import mark_safe  # import function
 
 from users.decorators import func_log
 
-register = template.Library()
+"""
+https://docs.djangoproject.com/en/2.2/howto/custom-template-tags/
+
+Do not forget to load it:
+
+{% load tag_filter_name %}
+
+{{ post.content|render_content }}
+"""
 
 logger = logging.getLogger(__name__)
 
-'''
-https://docs.djangoproject.com/en/2.2/howto/custom-template-tags/
-'''
+register = template.Library()
 
 
-@func_log
 def generate_link(link):
-    logger.debug(link)
     return '<a class="link" href="{}">{}</a>'.format(link, link)
 
 
-@func_log
 def generate_hashtag_link(tag):
-    logger.debug(tag)
-
     # Free to configuree the URL the way adapted your project
     url = "/tags/{}/".format(tag)
-    logger.debug(url)
-
     return '<a class="hashtag" href="{}">#{}</a>'.format(url, tag)
 
 
-@func_log
 @register.filter
-def render_content(obj):
-    logger.debug(obj)
-
+def render_tags_and_links(obj):
     text = re.sub(r"#(\w+)", lambda m: generate_hashtag_link(m.group(1)), obj)
-    logger.debug(text)
-
-    return mark_safe(re.sub(r"(https?://[^\s]+)",
-                            lambda m: generate_link(m.group(1)), text))
     # return re.sub(r"(?P<url>https?://[^\s]+)", lambda m: generate_link(m.group(1)), text)
 
-
-# @func_log
-def generate_links(link):
-    logger.debug(link)
-
-    # return mark_safe(re.sub(r"(?Phttps?://[^\s]+)",
-    #                         lambda m: generate_link(m.group(1)), link))
+    # If you want Django to mark it as safe content, you can do the following:
+    return mark_safe(re.sub(r"(https?://[^\s]+)",
+                            lambda m: generate_link(m.group(1)), text))
 
 
-# register.filter('render_content', render_content)
+@register.filter
+def time_since_date_posted(obj):
+    if obj is not None:
+        diff = timezone.now() - obj
+        s = diff.seconds
+        if diff.days > 30 or diff.days < 0:
+            return obj.strftime('Y-m-d H:i')
+        elif diff.days == 1:
+            return 'One day ago'
+        elif diff.days > 1:
+            return '{} days ago'.format(diff.days)
+        elif s <= 1:
+            return 'just now'
+        elif s < 60:
+            return '{} seconds ago'.format(s)
+        elif s < 120:
+            return 'one minute ago'
+        elif s < 3600:
+            return '{} minutes ago'.format(round(s/60))
+        elif s < 7200:
+            return 'one hour ago'
+        else:
+            return '{} hours ago'.format(round(s/3600))
+    else:
+        return None
