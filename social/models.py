@@ -5,13 +5,14 @@ import os
 import uuid
 from datetime import date
 
+from django.conf import settings
 from django.core.validators import MaxLengthValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
 
-from users.models import MyUser
+from users.models import Profile
 
 logger = logging.getLogger(__name__)
 
@@ -26,13 +27,15 @@ class Post(models.Model):
     # It is 'one to many' relation, because 1 user can have multiple posts.
     # It is done by ForeginKey.
     # on_delete means what happens when user is deleted, CASCADE means delete all his posts.
-    author = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField(max_length=280,
                                validators=[MaxLengthValidator(280)])
     # content = models.CharField(max_length=280)
     date_posted = models.DateTimeField(default=timezone.now)
     location = models.CharField(max_length=40, blank=True)
     image = models.ImageField(upload_to=get_file_path, blank=True)
+    likes = models.ManyToManyField(Profile, blank=True, related_name='post_likes')
 
     """ Resizing images on local storage """
 

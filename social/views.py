@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views.generic import (
     CreateView, DeleteView, DetailView, ListView, UpdateView)
 
-from users.admin import MyUser
+from users.models import Profile
 
 from .forms import PostForm
 from .models import Post
@@ -16,11 +16,31 @@ logger = logging.getLogger(__name__)
 
 
 def like_post(request):
+    from django.conf import settings as ds
+    from social_app import settings as ms
+
+    logger.debug(ds.AUTH_USER_MODEL)
+    logger.debug(ms.AUTH_USER_MODEL)
     logger.debug(request.method)
 
     if request.method == 'POST':
         foo = request.POST.get('postId')
         bar = request.POST.get('userId')
+        post = Post.objects.get(pk=int(foo))
+        logger.debug(post)
+        user = Profile.objects.get(pk=int(bar))
+        logger.debug(user)
+        post.likes.add(user)
+
+        # for e in user:
+        #     logger.debug(e)
+
+        for e in user.post_likes.all():
+            logger.debug(e)
+
+        for e in post.likes.all():
+            logger.debug(e)
+
     else:
         foo = request.GET.get('postId')
         bar = request.GET.get('userId')
