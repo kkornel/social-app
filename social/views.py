@@ -2,14 +2,44 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views.generic import (
     CreateView, DeleteView, DetailView, ListView, UpdateView)
+
+from users.admin import MyUser
 
 from .forms import PostForm
 from .models import Post
 
 logger = logging.getLogger(__name__)
+
+
+def like_post(request):
+    logger.debug(request.method)
+
+    if request.method == 'POST':
+        foo = request.POST.get('postId')
+        bar = request.POST.get('userId')
+    else:
+        foo = request.GET.get('postId')
+        bar = request.GET.get('userId')
+
+    logger.debug(foo)
+    logger.debug(bar)
+
+    return HttpResponse('')
+
+
+class UserProfilePostsView(ListView):
+    model = Post
+    template_name = 'social/user_profile_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 10
+
+    def get_queryset(self):
+        user = get_object_or_404(MyUser, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=user).order_by('-date_posted')
 
 
 class PostListView(ListView):
