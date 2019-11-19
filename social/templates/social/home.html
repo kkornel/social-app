@@ -7,7 +7,9 @@
     <div class="my-horizontal-bar"></div>
 
     <script>
-        function send_like(postId, userId) {
+        function send_like(postId, userId, id) {
+            $('#' + id).toggleClass("liked");
+            $('#' + id).toggleClass("heart");
             $.ajax({
                 url: 'like/',
                 type: 'POST',
@@ -17,7 +19,7 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}',
                 },
                 success: function (data) {
-                    console.log('lel');
+                    console.log('Liked!');
                     console.log(data);
                 },
                 error: function (data) {
@@ -64,10 +66,21 @@
                                 <small>121</small></a>
                         </div>
                         <div>
-                            <a href="javascript:void(0);" onclick="send_like('{{post.pk}}', '{{user.pk}}');"
-                                class="heart hvr-icon-pulse-shrink"><i class="far fa-heart hvr-icon"></i><small
-                                    class="heart-humber">
-                                    123</small></a>
+                            <a id="post-like-{{post.id}}" href="javascript:void(0);"
+                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                                onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
+                                onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');"
+                                class="hvr-icon-pulse-shrink heart{% if user.profile in post.likes.all %}liked{% endif %}">
+                                <i class="far fa-heart hvr-icon"></i>
+                                <small>123</small>
+                            </a>
+                            <!-- <a id="post-like-{{post.id}}" href="javascript:void(0);"
+                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                                class="{% if user.profile in post.likes.all %}liked{% endif %} heart hvr-icon-pulse-shrink">
+                                <i class="far fa-heart hvr-icon"></i>
+                                <small>123</small>
+                            </a> -->
+
                             <!-- <a href="{% url 'like-post'  %}" class="heart hvr-icon-pulse-shrink"><i
                                         class="far fa-heart hvr-icon"></i><small class="heart-humber">
                                         123</small></a> -->

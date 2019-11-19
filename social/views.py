@@ -10,43 +10,41 @@ from django.views.generic import (
 from users.models import Profile
 
 from .forms import PostForm
-from .models import Post
+from .models import Like, Post
 
 logger = logging.getLogger(__name__)
 
 
 def like_post(request):
-    from django.conf import settings as ds
-    from social_app import settings as ms
-
-    logger.debug(ds.AUTH_USER_MODEL)
-    logger.debug(ms.AUTH_USER_MODEL)
-    logger.debug(request.method)
-
     if request.method == 'POST':
-        foo = request.POST.get('postId')
-        bar = request.POST.get('userId')
-        post = Post.objects.get(pk=int(foo))
-        logger.debug(post)
-        user = Profile.objects.get(pk=int(bar))
-        logger.debug(user)
-        post.likes.add(user)
+        postId = request.POST.get('postId')
+        userId = request.POST.get('userId')
 
+        post = Post.objects.get(pk=int(postId))
+        logger.debug(post)
+        profile = Profile.objects.get(pk=int(userId))
+        logger.debug(profile)
+
+        like = post.likes.add(profile)
+        logger.debug(like)
         # for e in user:
         #     logger.debug(e)
 
-        for e in user.post_likes.all():
+        for e in profile.likes.all():
             logger.debug(e)
 
         for e in post.likes.all():
             logger.debug(e)
 
+        saas = profile in post.likes.all()
+
+        logger.debug(saas)
+        for e in Like.objects.all():
+            logger.debug(e)
+
     else:
         foo = request.GET.get('postId')
         bar = request.GET.get('userId')
-
-    logger.debug(foo)
-    logger.debug(bar)
 
     return HttpResponse('')
 

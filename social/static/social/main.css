@@ -147,10 +147,6 @@ a.post-metadata-text:hover {
   color: #d9d9d9;
 }
 
-div.heart-number:hover {
-  color: yellow;
-}
-
 .post-image {
   height: 555px;
   /* width: 540px; */
@@ -194,7 +190,11 @@ a.post-stats:hover {
 
 .heart {
   font-size: 16px; 
-  color:#6e767d
+  color:#6e767d;
+  animation-fill-mode: forwards;  
+  /* For heart-pulse */
+  display: inline-block;
+  vertical-align: middle;
 }
 
 a.heart:hover {
@@ -207,6 +207,27 @@ a.heart:hover {
   outline: 0 none;
   text-decoration: none;
   text-shadow: 0 0 5px #ff0000;
+}
+
+.liked {
+  font-size: 16px; 
+  color:rgb(255, 0, 0);
+  animation-fill-mode: forwards;  
+  /* For heart-pulse */
+  display: inline-block;
+  vertical-align: middle;
+}
+
+a.liked:hover {
+  color:#6e767d;
+  text-shadow: none;
+	-webkit-transition: 50ms linear 0s;
+	-moz-transition: 50ms linear 0s;
+	-o-transition: 50ms linear 0s;
+	transition: 50ms linear 0s;
+  outline: 0 none;
+  text-decoration: none;
+  text-shadow: 0 0 5px #000000;
 }
 
 .comment {

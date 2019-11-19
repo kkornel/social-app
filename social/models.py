@@ -35,7 +35,9 @@ class Post(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     location = models.CharField(max_length=40, blank=True)
     image = models.ImageField(upload_to=get_file_path, blank=True)
-    likes = models.ManyToManyField(Profile, blank=True, related_name='post_likes')
+    # likes = models.ManyToManyField(Profile, blank=True)
+    likes = models.ManyToManyField(
+        Profile, blank=True, through='Like', related_name='likes')
 
     """ Resizing images on local storage """
 
@@ -60,7 +62,16 @@ class Post(models.Model):
             img.save(self.image.path)
 
     def __str__(self):
-        return f'{{{self.id}}}: author: {self.author} -> {self.content[:10]}... '
+        return f'Post#{self.id}: Author#{self.author.id}: {self.author.username} -> {self.content[:10]}... '
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+
+
+class Like(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    date_received = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Like#{self.id} for Post#{self.post.id} by User#{self.profile.user.username}  -> Content {self.post.content[:10]}... '
