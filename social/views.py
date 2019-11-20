@@ -2,19 +2,23 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import (HttpResponse, HttpResponseForbidden,
+                         HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.views import View
 from django.views.generic import (
-    CreateView, DeleteView, DetailView, ListView, UpdateView)
+    CreateView, DeleteView, DetailView, FormView, ListView, UpdateView)
+from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import FormMixin
 
 from users.models import MyUser, UserProfile
 
-from .forms import PostForm
-from .models import Like, Post
+from .forms import CommentForm, PostForm
+from .models import Comment, Like, Post
 
 logger = logging.getLogger(__name__)
 
-
+@login_required
 def like_post(request):
     if request.method == 'POST':
         postId = request.POST.get('postId')
@@ -24,16 +28,15 @@ def like_post(request):
         userprofile = UserProfile.objects.get(pk=int(userId))
 
         if userprofile in post.likes.all():
-            logger.debug('Like removed!')
-
             post.likes.remove(userprofile)
+            logger.debug('Like removed!')
+            response = f'Like removed by {userprofile.user.username}#{userprofile.user.id} for Post#{post.id}. Likes left: {post.likes.count()}'
         else:
-            logger.debug('Like added!')
-
             post.likes.add(userprofile)
+            logger.debug('Like added!')
+            response = f'Like number {post.likes.count()} added for Post#{post.id} by {userprofile.user.username}#{userprofile.user.id}'
 
-        # for e in user:
-        #     logger.debug(e)
+        #  TODO remove after testing with multiple users
         logger.debug(
             f'### {userprofile.user.username}\'s likes: #######################')
         for e in userprofile.likes.all():
@@ -46,16 +49,54 @@ def like_post(request):
         for e in Like.objects.all():
             logger.debug(' - ' + str(e))
 
-    else:
-        foo = request.GET.get('postId')
-        bar = request.GET.get('userId')
-
-    return HttpResponse('')
+    return HttpResponse(response)
 
 
-class UserProfilePostsView(ListView):
+class PostDetailView(DetailView):
     model = Post
-    template_name = 'social/user_profile_posts.html'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        return context
+
+
+class CommentCreateView(LoginRequiredMixin, SingleObjectMixin, FormView):
+    model = Post
+    form_class = CommentForm
+    template_name = 'social/post_detail.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user.userprofile
+        form.instance.post = self.object
+        form.save()
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.pk})
+
+
+class PostDetail(View):
+    """https://docs.djangoproject.com/en/2.2/topics/class-based-views/mixins/#using-formmixin-with-detailview"""
+    def get(self, request, *args, **kwargs):
+        view = PostDetailView.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = CommentCreateView.as_view()
+        return view(request, *args, **kwargs)
+
+
+class UserProfileView(ListView):
+    model = Post
+    template_name = 'social/user_profile.html'
     context_object_name = 'posts'
     paginate_by = 10
 
@@ -109,11 +150,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         """
         post = self.get_object()
         return self.request.user.userprofile == post.author
-
-
-class PostDetailView(DetailView):
-    model = Post
-    context_object_name = 'post'
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

@@ -28,7 +28,7 @@ class Post(models.Model):
     # It is done by ForeginKey.
     # on_delete means what happens when user is deleted, CASCADE means delete all his posts.
     author = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE)
+        UserProfile, on_delete=models.CASCADE, related_name='posts')
     content = models.TextField(max_length=280,
                                validators=[MaxLengthValidator(280)])
     # content = models.CharField(max_length=280)
@@ -75,3 +75,15 @@ class Like(models.Model):
 
     def __str__(self):
         return f'Like#{self.id} for Post#{self.post.id} by {self.userprofile.user.username}#{self.userprofile.user.id}  -> Content {self.post.content[:10]}... '
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField(max_length=280)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comment#{self.id} for Post#{self.post.id} by {self.author.user.username}#{self.author.user.id}  -> Content {self.text[:10]}... '

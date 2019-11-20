@@ -1,5 +1,6 @@
 {% extends 'social/base_sidebar.html' %}
 {% load filters %}
+
 {% block content %}
 <!-- <div class="col-md-7 offset-sm-1 my-main-column pr-0 pl-0"> -->
 <div class="col-md-7 my-main-column pr-0 pl-0">
@@ -36,7 +37,7 @@
 
     <article class="media my-post">
 
-        <a href="{% url 'user-profile-posts' post.author.user.username %}"><img class="rounded-circle post-author-img"
+        <a href="{% url 'user-profile' post.author.user.username %}"><img class="rounded-circle post-author-img"
                 src="{{ post.author.image.url }}"></a>
 
         <div class="media-body">

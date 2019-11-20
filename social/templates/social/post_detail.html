@@ -1,6 +1,6 @@
 {% extends 'social/base.html' %}
-
-
+{% load filters %}
+{% load crispy_forms_tags %}
 {% block base_content %}
 <article class="media my-post">
 
@@ -12,7 +12,7 @@
             <a class="post-author-name mr-2" href="username">{{ post.author.user.username }}</a>
             <a class="post-metadata-text mr-2" href="location">{{ post.location }}</a>
             <!-- <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span> -->
-            <span class="post-metadata-text">{{ post.pretty_published_date }}</span>
+            <span class="post-metadata-text">{{ post.date_posted }}</span>
         </div>
 
         <p class="article-content post-content">{{ post.content }}</p>
@@ -47,6 +47,34 @@
                 </div>
             </div>
         </div>
+
+        <div class="my-horizontal-bar"></div>
+        <hr>
+        <div class="my-horizontal-bar"></div>
+        <h1 style="color: white;">{{ post.author }}</h1>
+
+
+        <h1>New comment</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Profile info</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Update</button>
+            </div>
+        </form>
+
+        {% for comment in post.comments.all %}
+        <div class="comment">
+            <div>{{ comment.date_created }}</div>
+            <strong>{{ comment.author }}</strong>
+            <p>{{ comment.text|linebreaks }}</p>
+        </div>
+        {% empty %}
+        <p>No comments here yet :(</p>
+        {% endfor %}
 
     </div>
 </article>

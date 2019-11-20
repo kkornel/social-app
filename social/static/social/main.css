@@ -286,6 +286,10 @@ a.comment:hover {
   border-top-width: 1px;
 }
 
+.comment {
+    margin: 20px 0px 20px 20px;
+}
+
 
 
 
