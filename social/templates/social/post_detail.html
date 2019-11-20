@@ -4,12 +4,12 @@
 {% block base_content %}
 <article class="media my-post">
 
-    <img class="rounded-circle post-author-img" src="{{ post.author.profile.image.url }}">
+    <img class="rounded-circle post-author-img" src="{{ post.author.image.url }}">
 
     <div class="media-body">
 
         <div class="post-metadata">
-            <a class="post-author-name mr-2" href="username">{{ post.author.username }}</a>
+            <a class="post-author-name mr-2" href="username">{{ post.author.user.username }}</a>
             <a class="post-metadata-text mr-2" href="location">{{ post.location }}</a>
             <!-- <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span> -->
             <span class="post-metadata-text">{{ post.pretty_published_date }}</span>
@@ -17,7 +17,7 @@
 
         <p class="article-content post-content">{{ post.content }}</p>
 
-        {% if post.author == user %}
+        {% if post.author.user == user %}
         <div>
             <a class="btn btn-secondary btn-sm tm-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
             <a class="btn btn-danger btn-sm tm-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>

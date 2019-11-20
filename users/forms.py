@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.views import PasswordResetConfirmView
 
-from .models import Profile
+from .models import UserProfile
 
 
 class CaptchaPasswordResetForm(PasswordResetForm):
@@ -27,7 +27,7 @@ class CustomSetPasswordForm(SetPasswordForm):
             attrs={'placeholder': 'New password confirmation'}))
 
 
-class ProfileUpdateForm(forms.ModelForm):
+class UserProfileUpdateForm(forms.ModelForm):
     class Meta:
-        model = Profile
+        model = UserProfile
         fields = ['image']

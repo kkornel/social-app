@@ -16,12 +16,12 @@
 
     <article class="media my-post">
 
-        <a href="author"><img class="rounded-circle post-author-img" src="{{ post.author.profile.image.url }}"></a>
+        <a href="author"><img class="rounded-circle post-author-img" src="{{ post.author.image.url }}"></a>
 
         <div class="media-body">
 
             <div class="post-metadata">
-                <a class="post-author-name mr-2" href="username">{{ post.author.username }}</a>
+                <a class="post-author-name mr-2" href="username">{{ post.author.user.username }}</a>
                 <a class="post-metadata-text mr-2"
                     href="https://www.google.pl/maps/place/{{ post.location }}">{{ post.location }}</a>
                 <!-- <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span> -->

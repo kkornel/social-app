@@ -4,14 +4,14 @@ from django import forms
 from django.contrib.auth import password_validation
 from rest_framework import serializers
 
-from users.models import MyUser, Profile
+from users.models import MyUser, UserProfile
 
 logger = logging.getLogger(__name__)
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
+        model = UserProfile
         fields = ['user', 'bio', 'city', 'website', 'image']
 
 

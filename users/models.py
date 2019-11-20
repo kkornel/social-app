@@ -115,15 +115,18 @@ class MyUser(AbstractBaseUser):
         return self.is_admin
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+class UserProfile(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
     bio = models.CharField(max_length=300)
     city = models.CharField(max_length=100)
     website = models.CharField(max_length=40)
     image = models.ImageField(default='default.jpg', upload_to=get_file_path)
 
     def __str__(self):
-        return f'{self.user.username} Profile'
+        return f'Profile#{self.id} of {self.user.username}#{self.user.id}'
 
     """ Resizing images on local storage """
 

@@ -136,7 +136,7 @@ def reset_password(request):
 
 
 @login_required
-def profile(request):
+def userprofile(request):
     # if request.method == "POST":
     #     user_form = UserUpdateForm(request.POST, instance=request.user)
     #     profile_form = ProfileUpdateForm(

@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views.generic import (
     CreateView, DeleteView, DetailView, ListView, UpdateView)
 
-from users.models import Profile
+from users.models import MyUser, UserProfile
 
 from .forms import PostForm
 from .models import Like, Post
@@ -21,26 +21,30 @@ def like_post(request):
         userId = request.POST.get('userId')
 
         post = Post.objects.get(pk=int(postId))
-        logger.debug(post)
-        profile = Profile.objects.get(pk=int(userId))
-        logger.debug(profile)
+        userprofile = UserProfile.objects.get(pk=int(userId))
 
-        like = post.likes.add(profile)
-        logger.debug(like)
+        if userprofile in post.likes.all():
+            logger.debug('Like removed!')
+
+            post.likes.remove(userprofile)
+        else:
+            logger.debug('Like added!')
+
+            post.likes.add(userprofile)
+
         # for e in user:
         #     logger.debug(e)
-
-        for e in profile.likes.all():
-            logger.debug(e)
-
+        logger.debug(
+            f'### {userprofile.user.username}\'s likes: #######################')
+        for e in userprofile.likes.all():
+            logger.debug(' - ' + str(e))
+        logger.debug(f'### {post} likes: #######################')
         for e in post.likes.all():
-            logger.debug(e)
+            logger.debug(' - ' + str(e))
 
-        saas = profile in post.likes.all()
-
-        logger.debug(saas)
+        logger.debug('### All likes: #######################')
         for e in Like.objects.all():
-            logger.debug(e)
+            logger.debug(' - ' + str(e))
 
     else:
         foo = request.GET.get('postId')
@@ -56,8 +60,9 @@ class UserProfilePostsView(ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        user = get_object_or_404(MyUser, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-date_posted')
+        user = MyUser.objects.get(username=self.kwargs.get('username'))
+        userprofile = get_object_or_404(UserProfile, user=user)
+        return Post.objects.filter(author=userprofile).order_by('-date_posted')
 
 
 class PostListView(ListView):
@@ -81,7 +86,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     # template_name = 'social/post_form.html'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author = self.request.user.userprofile
         return super().form_valid(form)
 
 
@@ -93,7 +98,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     # fields = ['content', 'location', 'image']
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author = self.request.user.userprofile
         return super().form_valid(form)
 
     def test_func(self):
@@ -103,7 +108,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         If he is not, then he has no permissions to do that.
         """
         post = self.get_object()
-        return self.request.user == post.author
+        return self.request.user.userprofile == post.author
 
 
 class PostDetailView(DetailView):
@@ -118,7 +123,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         post = self.get_object()
-        return self.request.user == post.author
+        return self.request.user.userprofile == post.author
 
 
 @login_required

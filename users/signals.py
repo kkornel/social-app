@@ -1,10 +1,11 @@
 import logging
 
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from .decorators import func_log
-from .models import MyUser, Profile
+from .models import UserProfile
 
 logger = logging.getLogger(__name__)
 
@@ -15,17 +16,17 @@ logging.getLogger('urllib3').setLevel(logging.CRITICAL)
 
 
 @func_log
-@receiver(post_save, sender=MyUser)
-def create_profile(sender, instance, created, **kwargs):
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_user_profile(sender, instance, created, **kwargs):
     logger.debug(
-        f'create_profile signal: sender:{sender}, instance:{instance}, created:{created}, kwargs:{kwargs}')
+        f'create_user_profile signal: sender:{sender}, instance:{instance}, created:{created}, kwargs:{kwargs}')
     if created:
-        Profile.objects.create(user=instance)
+        UserProfile.objects.create(user=instance)
 
 
 @func_log
-@receiver(post_save, sender=MyUser)
-def save_profile(sender, instance, **kwargs):
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def save_user_profile(sender, instance, **kwargs):
     logger.debug(
-        f'save_profile signal: sender:{sender}, instance:{instance}, kwargs:{kwargs}')
-    instance.profile.save()
+        f'save_user_profile signal: sender:{sender}, instance:{instance}, kwargs:{kwargs}')
+    instance.userprofile.save()

@@ -36,13 +36,13 @@
 
     <article class="media my-post">
 
-        <a href="{% url 'user-profile-posts' post.author.username %}"><img class="rounded-circle post-author-img"
-                src="{{ post.author.profile.image.url }}"></a>
+        <a href="{% url 'user-profile-posts' post.author.user.username %}"><img class="rounded-circle post-author-img"
+                src="{{ post.author.image.url }}"></a>
 
         <div class="media-body">
 
             <div class="post-metadata">
-                <a class="post-author-name mr-2" href="username">{{ post.author.username }}</a>
+                <a class="post-author-name mr-2" href="username">{{ post.author.user.username }}</a>
                 <a class="post-metadata-text mr-2"
                     href="https://www.google.pl/maps/place/{{ post.location }}">{{ post.location }}</a>
                 <!-- <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span> -->
@@ -55,7 +55,7 @@
             {% if post.image %}
             <img class="post-image" src="{{ post.image.url }}">
             {% endif %}
-
+            
             <div class="post-likes-panel">
                 <div class="aligin-right">
                     <div class="row">
@@ -70,7 +70,7 @@
                                 onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
                                 onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
                                 onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');"
-                                class="hvr-icon-pulse-shrink heart{% if user.profile in post.likes.all %}liked{% endif %}">
+                                class="hvr-icon-pulse-shrink {% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}">
                                 <i class="far fa-heart hvr-icon"></i>
                                 <small>123</small>
                             </a>

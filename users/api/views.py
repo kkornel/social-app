@@ -8,9 +8,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.decorators import func_log
-from users.models import MyUser, Profile
+from users.models import MyUser, UserProfile
 
-from .serializers import ProfileSerializer, RegistrationSerializer
+from .serializers import RegistrationSerializer, UserProfileSerializer
 
 # from .models import
 
@@ -38,12 +38,12 @@ def registration_view(request):
         return Response(data)
 
 
-class ProfileView(
+class UserProfileView(
         mixins.ListModelMixin,
         mixins.CreateModelMixin,
         generics.GenericAPIView):
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
     '''
     Mixins are containers of functionality, that you can include in class to provide some functionality in this view.
     We always include them at the beggining of our inheritance.
@@ -56,31 +56,31 @@ class ProfileView(
         return self.create(self, request, *args, **kwargs)
 
 
-class ProfileCreateView(
+class UserProfileCreateView(
         mixins.ListModelMixin,
         generics.CreateAPIView):
     '''
-     This is the same as ProfileView, but we don't have to overider post()
+     This is the same as UserProfileView, but we don't have to overider post()
     beacuse we are inheriting it.
     It does not handle GET method. But we can I it by ourselves.
     Like this:
     '''
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
 
     def get(self, request, *args, **kwargs):
         return self.list(self, request, *args, **kwargs)
 
 
-class ProfilePostListCreateView(generics.ListAPIView):
-    ''' This one has the exact same functionallity like ProfileView and ProfileCreateView
+class UserProfilePostListCreateView(generics.ListAPIView):
+    ''' This one has the exact same functionallity like UserProfileView and UserProfileCreateView
     but we inherit from other generic so we have to write less code.
     '''
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
 
 
-class ApiProfileView(APIView):
+class ApiUserProfileView(APIView):
     permission_classes = (IsAuthenticated, )
 
     @func_log
@@ -89,8 +89,8 @@ class ApiProfileView(APIView):
         print(request)
         print(request.data)
 
-        qs = Profile.objects.all()
-        serializer = ProfileSerializer(qs, many=True)
+        qs = UserProfile.objects.all()
+        serializer = UserProfileSerializer(qs, many=True)
         return Response(serializer.data)
 
 
@@ -102,8 +102,8 @@ class TestView(APIView):
         logger.debug(request.user)
         logger.debug(request.auth)
 
-        profile = Profile.objects.get(user=request.user)
-        serializer = ProfileSerializer(profile)
+        userprofile = UserProfile.objects.get(user=request.user)
+        serializer = UserProfileSerializer(userprofile)
 
         response = serializer.data.copy()
         response['username'] = request.user.username
