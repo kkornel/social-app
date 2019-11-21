@@ -120,6 +120,7 @@ body {
 
 .post-metadata {
   margin-bottom: 2px;
+  font-size: 15px;
 }
 
 .post-author-name {
@@ -129,13 +130,11 @@ body {
 }
 
 a.post-author-name:hover {
-  font-size: 15px;
   font-weight: 700;
   color: #ffffff;
 }
 
 .post-metadata-text {
-  font-size: 15px;
   font-weight: 400;
   color: #6e767d;
 }
@@ -147,7 +146,6 @@ a.post-metadata-text:hover {
 }
 
 .post-content {
-  font-size: 15px;
   font-weight: 400;
   color: #d9d9d9;
 }
@@ -188,9 +186,24 @@ a.post-stats:hover {
   color: #a8a7a7;
 }
 
-.aligin-right {
+.align-right {
   display: flex; 
-  justify-content: flex-end
+  justify-content: flex-end;
+  
+}
+
+.align-right2 {
+  float:right;
+  /* margin-left: auto;  */
+  /* margin-right: 0px; */
+}
+
+.cross-icon {
+  color:#2f3336;
+}
+
+.cross-icon:hover {
+  color: #a8a7a7;
 }
 
 .heart {
@@ -255,6 +268,10 @@ a.comment:hover {
   text-shadow: 0 0 5px #00ffff;
 }
 
+#comments {
+  margin: 0px 20px 20px 20px;
+}
+
 .commented {
   font-size: 16px; 
   color: #239eea;
@@ -277,8 +294,59 @@ a.commented:hover {
   text-shadow: 0 0 5px #0077ff; */
 }
 
+.my-btn {
+  color: #d9d9d9;
+  background-color: #3c2562;
+  margin-right: 0px;
+}
+
+.my-btn:hover {
+  color: #ffffff;
+  background-color: #794bc4;
+}
+
+.comment-author-img {
+  height: 54px;
+  width: 54px;
+  /* margin-right: 16px; */
+  margin-right: 12px;
+  margin-top: 2px;
+}
+
+#div_id_text {
+  margin-bottom: 10px;
+}
+
 .comment-for-profile {
-    margin: 20px 0px 20px 20px;
+    /* margin: 20px 0px 20px 20px; */
+    /* background-color: #794bc4;
+    border-bottom-color: red;
+    border-bottom-style: solid;
+    border-bottom-width: 1px; */
+    border-radius: 15px;
+    margin-bottom: 10px;
+    padding: 5px;
+
+     border-bottom-color: #2f3336;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  
+  border-left-color: #2f3336;
+  border-left-style: solid;
+  border-left-width: 1px;
+
+  border-right-color: #2f3336;
+  border-right-style: solid;
+  border-right-width: 1px;
+
+  border-top-color: #2f3336;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.comment-for-profile:hover {
+  background-color: #15181c;
+
 }
 
 .brd-container {
@@ -314,6 +382,24 @@ a.commented:hover {
   border-right-width: 1px;
 
   border-top-color: green;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.brd-post {
+  border-bottom-color: aqua;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  
+  border-left-color: aqua;
+  border-left-style: solid;
+  border-left-width: 1px;
+
+  border-right-color: aqua;
+  border-right-style: solid;
+  border-right-width: 1px;
+
+  border-top-color: aqua;
   border-top-style: solid;
   border-top-width: 1px;
 }
