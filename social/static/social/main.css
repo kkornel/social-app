@@ -56,6 +56,13 @@ body {
 .bg-onhover {
   background-color: #15181c;
 }
+.delete-comment {
+  margin: 5px 10px 0px 0px;
+}
+.delete-comment:hover{
+  cursor: pointer;
+}
+
 
 .my-main-column {
   /* background-color: #0c50b6; */
@@ -102,7 +109,6 @@ body {
   padding-left: 15px;
   padding-right: 15px;
   padding-top: 5px;
-  
 }
 
 /* .my-post2 {
@@ -128,11 +134,20 @@ body {
   font-weight: 700;
   color: #d9d9d9;
 }
-
 a.post-author-name:hover {
-  font-weight: 700;
   color: #ffffff;
 }
+.author-name-sm {
+  font-size: 15px;
+  font-weight: 700;
+  color: #d9d9d9;
+}
+
+a.author-name-sm:hover {
+color: #ffffff;
+}
+
+
 
 .post-metadata-text {
   font-weight: 400;
@@ -145,9 +160,29 @@ a.post-metadata-text:hover {
   color: #767e85;
 }
 
+.dimmed-metadata-text {
+  font-weight: 400;
+  color: #6e767d;
+}
+
+a.dimmed-metadata-text:hover {
+  font-size: 15px;
+  font-weight: 400;
+  color: #767e85;
+}
+
 .post-content {
   font-weight: 400;
   color: #d9d9d9;
+}
+
+.normal-text-content {
+  font-weight: 400;
+  color: #d9d9d9;
+}
+
+.link-hover:hover {
+    cursor: pointer;
 }
 
 .post-image {
@@ -198,12 +233,8 @@ a.post-stats:hover {
   /* margin-right: 0px; */
 }
 
-.cross-icon {
-  color:#2f3336;
-}
-
-.cross-icon:hover {
-  color: #a8a7a7;
+.float-right {
+  float:right;
 }
 
 .heart {
@@ -268,9 +299,7 @@ a.comment:hover {
   text-shadow: 0 0 5px #00ffff;
 }
 
-#comments {
-  margin: 0px 20px 20px 20px;
-}
+
 
 .commented {
   font-size: 16px; 
@@ -294,13 +323,13 @@ a.commented:hover {
   text-shadow: 0 0 5px #0077ff; */
 }
 
-.my-btn {
+.my-purple-btn {
   color: #d9d9d9;
   background-color: #3c2562;
   margin-right: 0px;
 }
 
-.my-btn:hover {
+.my-purple-btn:hover {
   color: #ffffff;
   background-color: #794bc4;
 }
@@ -317,37 +346,8 @@ a.commented:hover {
   margin-bottom: 10px;
 }
 
-.comment-for-profile {
-    /* margin: 20px 0px 20px 20px; */
-    /* background-color: #794bc4;
-    border-bottom-color: red;
-    border-bottom-style: solid;
-    border-bottom-width: 1px; */
-    border-radius: 15px;
-    margin-bottom: 10px;
-    padding: 5px;
 
-     border-bottom-color: #2f3336;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  
-  border-left-color: #2f3336;
-  border-left-style: solid;
-  border-left-width: 1px;
 
-  border-right-color: #2f3336;
-  border-right-style: solid;
-  border-right-width: 1px;
-
-  border-top-color: #2f3336;
-  border-top-style: solid;
-  border-top-width: 1px;
-}
-
-.comment-for-profile:hover {
-  background-color: #15181c;
-
-}
 
 .brd-container {
   margin-top: 10px;

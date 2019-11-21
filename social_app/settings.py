@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
-
+    'bootstrap_modal_forms',
+    'widget_tweaks',
     # Local
     'users.apps.UsersConfig',
     'social.apps.SocialConfig',

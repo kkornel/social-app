@@ -1,62 +1,97 @@
 {% extends 'social/base_sidebar.html' %}
+{% load static %}
 {% load filters %}
 {% load crispy_forms_tags %}
+
+{% block stylesheet_block %}
+<link rel="stylesheet" type="text/css" href="{% static 'social/post-details.css' %}">
+{% endblock stylesheet_block %}
+
+{% block js_block %}
+<script src="{% static 'social/scripts.js' %}"></script>
+<script>
+    $(function () {
+        $(".delete-comment").each(function () {
+            $(this).modalForm({ formURL: $(this).data('id') });
+            console.log($(this).data('id'));
+        });
+
+    });
+</script>
+{% endblock js_block %}
+
 {% block content %}
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+        </div>
+    </div>
+</div>
+
 <div class="col-md-7 my-main-column pr-0 pl-0">
-    <article class="media my-post brd-post">
-        <a href=" {% url 'user-profile' post.author.user.username %}">
-            <img class="rounded-circle post-author-img" src="{{ post.author.image.url }}">
-        </a>
-        <div class="media-body">
-            <div class="post-metadata">
-                <a class="post-author-name mr-2" href="{% url 'user-profile' post.author.user.username %}">
+    <div class="my-post brd-post">
+        <article class="media">
+            <span class="author-img-sm-span">
+                <a href=" {% url 'user-profile' post.author.user.username %}">
+                    <img class="rounded-circle author-img-sm" src="{{ post.author.image.url }}">
+                </a>
+            </span>
+            <div class="media-body">
+                <a class="author-name-bg" href="{% url 'user-profile' post.author.user.username %}">
                     {{ post.author.user.username }}
                 </a>
-                <a class="post-metadata-text mr-2" href="https://www.google.pl/maps/place/{{ post.location }}">
-                    {{ post.location }}
-                </a>
-                <span class="post-metadata-text">
-                    {{ post.date_posted|time_since_date_posted }}
-                </span>
             </div>
 
-            <p class="article-content post-content">
-                {{ post.content|render_tags_and_links }}
-            </p>
-
-            {% if post.image %}
-            <img class="post-image" src="{{ post.image.url }}">
+            {% if user.userprofile == post.author %}
+            <div class="dropdown">
+                <a class="link-hover" data-toggle="dropdown">
+                    <i class="fa fa-chevron-down dark-icon" aria-hidden="true"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'post-update' post.pk %}">Edit</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'post-delete' post.pk %}">Delete</a>
+                </div>
+            </div>
             {% endif %}
-
-            <div class="post-likes-panel">
-                <div class="align-right">
-                    <div class="row">
-                        <div>
-                            {% has_user_commented user.pk post.pk as has_commented %}
-                            <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#comments"
-                                class="col-sec mr-2 {% if has_commented %}commented{% else %}comment{% endif %}"
-                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
-                                onmouseover="$('#' + this.id).addClass('hvr-icon-wobble-horizontal');"
-                                onmouseout="$('#' + this.id).removeClass('hvr-icon-wobble-horizontal');">
-                                <i class="far fa-comment hvr-icon"></i>
-                                <small>{{ post.comments.all.count }}</small>
-                            </a>
-                        </div>
-                        <div>
-                            <a id="post-like-{{post.id}}" href="javascript:void(0);"
-                                class="{% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}"
-                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
-                                onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
-                                onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');">
-                                <i class="far fa-heart hvr-icon"></i>
-                                <small id="post-likes-count">{{ post.likes.all.count }}</small>
-                            </a>
-                        </div>
+        </article>
+        <article class="media">
+            <div class="media-body">
+                <p class="article-content post-detail-content">
+                    {{ post.content|render_tags_and_links }}
+                </p>
+                {% if post.image %}
+                <!-- TODO Fix all sizes of imgs -->
+                <img class="post-detail-image" src="{{ post.image.url }}">
+                {% endif %}
+                <div class="my-horizontal-bar mt-3"></div>
+                <div class="justify-div">
+                    <div>
+                        {% has_user_commented user.pk post.pk as has_commented %}
+                        <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#comments"
+                            class="col-sec mr-2 post-detail-likes-panel {% if has_commented %}commented{% else %}comment{% endif %}"
+                            onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                            onmouseover="$('#' + this.id).addClass('hvr-icon-wobble-horizontal');"
+                            onmouseout="$('#' + this.id).removeClass('hvr-icon-wobble-horizontal');">
+                            <i class="far fa-comment hvr-icon"></i>
+                            <small>{{ post.comments.all.count }}</small>
+                        </a>
+                    </div>
+                    <div>
+                        <a id="post-like-{{post.id}}" href="javascript:void(0);"
+                            class="post-detail-likes-panel {% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}"
+                            onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id, '{{ csrf_token }}');"
+                            onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
+                            onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');">
+                            <i class="far fa-heart hvr-icon"></i>
+                            <small id="post-likes-count">{{ post.likes.all.count }}</small>
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-    </article>
+        </article>
+    </div>
     <div class="my-horizontal-bar"></div>
     <div id="comments">
         <form method="POST" enctype="multipart/form-data">
@@ -66,73 +101,53 @@
                 {{ form|crispy }}
             </fieldset>
             <div class="form-group align-right">
-                <button class="btn my-btn" type="submit">Replay</button>
+                <button class="btn my-purple-btn" type="submit">Replay</button>
             </div>
         </form>
         <div class="my-horizontal-bar mb-2"></div>
         {% for comment in post.comments.all %}
-        <div class="comment-for-profile">
+        <div class="post-detail-comment">
             <article class="media">
-                <a href=" {% url 'user-profile' comment.author.user.username %}">
-                    <img class="rounded-circle comment-author-img" src="{{ comment.author.image.url }}">
-                </a>
+                <span class="comment-author-img-sm-span">
+                    <a href=" {% url 'user-profile' comment.author.user.username %}">
+                        <img class="rounded-circle author-img-sm" src="{{ comment.author.image.url }}">
+                    </a>
+                </span>
                 <div class="media-body">
-                    <div class="post-metadata">
-                        <a class="post-author-name mr-2" href="{% url 'user-profile' post.author.user.username %}">
+                    <div>
+                        <a class="author-name-sm mr-1" href="{% url 'user-profile' post.author.user.username %}">
                             {{ comment.author.user.username }}
                         </a>
-                        <span class="post-metadata-text">
+                        <span class="dimmed-metadata-text">
                             &raquo;
                         </span>
-                        <span class="post-metadata-text">
+                        <span class="dimmed-metadata-text ml-1">
                             <small>
                                 {{ comment.date_created|time_since_date_posted }}
                             </small>
                         </span>
-                        <div class="align-right2">
-                            <a class="btn btn-default" href="#"><i class="fas fa-times cross-icon"></i></a>
-                        </div>
-                    </div>
 
-                    <p class="article-content post-content">
-                        {{ comment.text|render_tags_and_links }}
-                    </p>
+                        {% if user.userprofile == post.author or user.userprofile == comment.author %}
+                        <div class="float-right">
+                            <a class="delete-comment link-hover" data-id="{% url 'delete-comment' comment.pk %}">
+                                <i class="fas fa-times dark-icon "></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="comment-content">
+                        <p class="article-content normal-text-content">
+                            {{ comment.text|render_tags_and_links }}
+                        </p>
+                    </div>
                 </div>
             </article>
-
         </div>
         {% empty %}
-        <p>No comments here yet :(</p>
+        <p class="post-detail-content">
+            No comments so far
+        </p>
         {% endfor %}
     </div>
 </div>
 {% endblock content %}
-<!-- 
-<div class="my-horizontal-bar"></div>
-<hr>
-<div class="my-horizontal-bar"></div>
-<h1 style="color: white;">{{ post.author }}</h1>
-
-<div id="comments">
-    <h1>New comment</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Profile info</legend>
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Update</button>
-        </div>
-    </form>
-
-    {% for comment in post.comments.all %}
-    <div class="comment">
-        <div>{{ comment.date_created }}</div>
-        <strong>{{ comment.author }}</strong>
-        <p>{{ comment.text|linebreaks }}</p>
-    </div>
-    {% empty %}
-    <p>No comments here yet :(</p>
-    {% endfor %}
-</div> -->

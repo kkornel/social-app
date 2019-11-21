@@ -1,11 +1,13 @@
 import logging
 
+from bootstrap_modal_forms.generic import BSModalDeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import (HttpResponse, HttpResponseForbidden,
                          HttpResponseRedirect)
 from django.shortcuts import get_object_or_404, redirect, render, reverse
-from django.views import View
+from django.urls import reverse_lazy
+from django.views import View, generic
 from django.views.generic import (
     CreateView, DeleteView, DetailView, FormView, ListView, UpdateView)
 from django.views.generic.detail import SingleObjectMixin
@@ -17,6 +19,16 @@ from .forms import CommentForm, PostForm
 from .models import Comment, Like, Post
 
 logger = logging.getLogger(__name__)
+
+
+class CommentDeleteView(BSModalDeleteView):
+    model = Comment
+    template_name = 'social/delete_comment.html'
+    success_message = 'Success: Comment deleted.'
+    # success_url = reverse_lazy('post-detail')
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
 
 @login_required
 def like_post(request):
@@ -30,11 +42,11 @@ def like_post(request):
         if userprofile in post.likes.all():
             post.likes.remove(userprofile)
             logger.debug('Like removed!')
-            response = f'Like removed by {userprofile.user.username}#{userprofile.user.id} for Post#{post.id}. Likes left: {post.likes.count()}'
+            # response = f'Like removed by {userprofile.user.username}#{userprofile.user.id} for Post#{post.id}. Likes left: {post.likes.count()}'
         else:
             post.likes.add(userprofile)
             logger.debug('Like added!')
-            response = f'Like number {post.likes.count()} added for Post#{post.id} by {userprofile.user.username}#{userprofile.user.id}'
+            # response = f'Like number {post.likes.count()} added for Post#{post.id} by {userprofile.user.username}#{userprofile.user.id}'
 
         #  TODO remove after testing with multiple users
         logger.debug(
@@ -48,7 +60,7 @@ def like_post(request):
         logger.debug('### All likes: #######################')
         for e in Like.objects.all():
             logger.debug(' - ' + str(e))
-
+    response = post.likes.all().count()
     return HttpResponse(response)
 
 
@@ -85,6 +97,7 @@ class CommentCreateView(LoginRequiredMixin, SingleObjectMixin, FormView):
 
 class PostDetail(View):
     """https://docs.djangoproject.com/en/2.2/topics/class-based-views/mixins/#using-formmixin-with-detailview"""
+
     def get(self, request, *args, **kwargs):
         view = PostDetailView.as_view()
         return view(request, *args, **kwargs)

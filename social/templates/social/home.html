@@ -10,6 +10,10 @@
         const likesCountText = smallTextLikesCount.text();
         let likesCount = parseInt(likesCountText);
 
+        console.log(postId);
+        console.log(userId);
+        console.log(id);
+
         if (isLiked) {
             likesCount -= 1;
         } else {
@@ -45,64 +49,64 @@
 <div class="col-md-7 my-main-column pr-0 pl-0">
     <div class="my-horizontal-bar"></div>
     {% for post in posts %}
-    <div onclick="location.href='/post/{{ post.id }}/';" style="cursor: pointer; "
+    <!-- <div onclick="location.href='/post/{{ post.id }}/';" style="cursor: pointer; "
         onmouseover="this.getElementsByClassName('my-post')[0].style.backgroundColor = '#15181c';"
-        onmouseout=" this.getElementsByClassName('my-post')[0].style.backgroundColor='black';">
-        <article class="media my-post">
-            <a href=" {% url 'user-profile' post.author.user.username %}">
-                <img class="rounded-circle post-author-img" src="{{ post.author.image.url }}">
-            </a>
-            <div class="media-body">
-                <div class="post-metadata">
-                    <a class="post-author-name mr-2" href="{% url 'user-profile' post.author.user.username %}">
-                        {{ post.author.user.username }}
-                    </a>
-                    <a class="post-metadata-text mr-2" href="https://www.google.pl/maps/place/{{ post.location }}">
-                        {{ post.location }}
-                    </a>
-                    <span class="post-metadata-text">
-                        {{ post.date_posted|time_since_date_posted }}
-                    </span>
-                </div>
+        onmouseout=" this.getElementsByClassName('my-post')[0].style.backgroundColor='black';"> -->
+    <article class="media my-post">
+        <a href=" {% url 'user-profile' post.author.user.username %}">
+            <img class="rounded-circle post-author-img" src="{{ post.author.image.url }}">
+        </a>
+        <div class="media-body">
+            <div class="post-metadata">
+                <a class="post-author-name mr-2" href="{% url 'user-profile' post.author.user.username %}">
+                    {{ post.author.user.username }}
+                </a>
+                <a class="post-metadata-text mr-2" href="https://www.google.pl/maps/place/{{ post.location }}">
+                    {{ post.location }}
+                </a>
+                <span class="post-metadata-text">
+                    {{ post.date_posted|time_since_date_posted }}
+                </span>
+            </div>
 
-                <p class="article-content post-content">
-                    {{ post.content|render_tags_and_links }}
-                </p>
+            <p class="article-content post-content">
+                {{ post.content|render_tags_and_links }}
+            </p>
 
-                {% if post.image %}
-                <img class="post-image" src="{{ post.image.url }}">
-                {% endif %}
+            {% if post.image %}
+            <img class="post-image" src="{{ post.image.url }}">
+            {% endif %}
 
-                <div class="post-likes-panel">
-                    <div class="align-right">
-                        <div class="row">
-                            <div>
-                                {% has_user_commented user.pk post.pk as has_commented %}
-                                <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#comments"
-                                    class="col-sec mr-2 {% if has_commented %}commented{% else %}comment{% endif %}"
-                                    onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
-                                    onmouseover="$('#' + this.id).addClass('hvr-icon-wobble-horizontal');"
-                                    onmouseout="$('#' + this.id).removeClass('hvr-icon-wobble-horizontal');">
-                                    <i class="far fa-comment hvr-icon"></i>
-                                    <small>{{ post.comments.all.count }}</small>
-                                </a>
-                            </div>
-                            <div>
-                                <a id="post-like-{{post.id}}" href="javascript:void(0);"
-                                    class="{% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}"
-                                    onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
-                                    onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
-                                    onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');">
-                                    <i class="far fa-heart hvr-icon"></i>
-                                    <small id="post-likes-count">{{ post.likes.all.count }}</small>
-                                </a>
-                            </div>
+            <div class="post-likes-panel">
+                <div class="align-right">
+                    <div class="row">
+                        <div>
+                            {% has_user_commented user.pk post.pk as has_commented %}
+                            <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#comments"
+                                class="col-sec mr-2 {% if has_commented %}commented{% else %}comment{% endif %}"
+                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                                onmouseover="$('#' + this.id).addClass('hvr-icon-wobble-horizontal');"
+                                onmouseout="$('#' + this.id).removeClass('hvr-icon-wobble-horizontal');">
+                                <i class="far fa-comment hvr-icon"></i>
+                                <small>{{ post.comments.all.count }}</small>
+                            </a>
+                        </div>
+                        <div>
+                            <a id="post-like-{{post.id}}" href="javascript:void(0);"
+                                class="{% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}"
+                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                                onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
+                                onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');">
+                                <i class="far fa-heart hvr-icon"></i>
+                                <small id="post-likes-count">{{ post.likes.all.count }}</small>
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
-        </article>
-    </div>
+        </div>
+    </article>
+    <!-- </div> -->
     <div class="my-horizontal-bar"></div>
     {% endfor %}
 </div>
