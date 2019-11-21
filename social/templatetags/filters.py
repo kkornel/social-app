@@ -7,6 +7,8 @@ from django import template
 from django.utils import timezone
 from django.utils.safestring import mark_safe  # import function
 
+from social.models import Post
+from users.admin import MyUser
 from users.decorators import func_log
 
 """
@@ -32,6 +34,22 @@ def generate_hashtag_link(tag):
     # Free to configuree the URL the way adapted your project
     url = "/tags/{}/".format(tag)
     return '<a class="hashtag" href="{}">#{}</a>'.format(url, tag)
+
+
+@register.simple_tag
+def has_user_commented(userId, postId):
+    try:
+        user = MyUser.objects.get(pk=userId)
+        userprofile = user.userprofile
+        post = Post.objects.get(pk=postId)
+        has_commented = post.comments.all().filter(author=userprofile).count() > 0
+        logger.debug(user)
+        logger.debug(userprofile)
+        logger.debug(post)
+        logger.debug(has_commented)
+        return has_commented
+    except Exception:
+        return False
 
 
 @register.filter

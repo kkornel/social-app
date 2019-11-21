@@ -53,29 +53,29 @@
         <div class="my-horizontal-bar"></div>
         <h1 style="color: white;">{{ post.author }}</h1>
 
+        <div id="comments">
+            <h1>New comment</h1>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Profile info</legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit">Update</button>
+                </div>
+            </form>
 
-        <h1>New comment</h1>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Profile info</legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Update</button>
+            {% for comment in post.comments.all %}
+            <div class="comment">
+                <div>{{ comment.date_created }}</div>
+                <strong>{{ comment.author }}</strong>
+                <p>{{ comment.text|linebreaks }}</p>
             </div>
-        </form>
-
-        {% for comment in post.comments.all %}
-        <div class="comment">
-            <div>{{ comment.date_created }}</div>
-            <strong>{{ comment.author }}</strong>
-            <p>{{ comment.text|linebreaks }}</p>
+            {% empty %}
+            <p>No comments here yet :(</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p>No comments here yet :(</p>
-        {% endfor %}
-
     </div>
 </article>
 {% endblock base_content %}

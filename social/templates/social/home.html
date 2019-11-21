@@ -2,97 +2,107 @@
 {% load filters %}
 
 {% block content %}
+<script>
+    function send_like(postId, userId, id) {
+        const aHrefLike = $('#' + id);
+        const isLiked = aHrefLike.hasClass('liked');
+        const smallTextLikesCount = $('#' + id).find("#post-likes-count");
+        const likesCountText = smallTextLikesCount.text();
+        let likesCount = parseInt(likesCountText);
+
+        if (isLiked) {
+            likesCount -= 1;
+        } else {
+            likesCount += 1;
+        }
+        smallTextLikesCount.text(likesCount);
+
+        aHrefLike.toggleClass("liked");
+        aHrefLike.toggleClass("heart");
+
+        $.ajax({
+            url: 'like/',
+            type: 'POST',
+            data: {
+                'postId': postId,
+                'userId': userId,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success: function (data) {
+                console.log('Liked!');
+                console.log(data);
+            },
+            error: function (data) {
+                console.log(data);
+            },
+        });
+    }
+</script>
+
 <!-- <div class="col-md-7 offset-sm-1 my-main-column pr-0 pl-0"> -->
 <div class="col-md-7 my-main-column pr-0 pl-0">
-    <!-- <div class="offset-sm-2 bg-steel"> -->
     <div class="my-horizontal-bar"></div>
 
-    <script>
-        function send_like(postId, userId, id) {
-            $('#' + id).toggleClass("liked");
-            $('#' + id).toggleClass("heart");
-            $.ajax({
-                url: 'like/',
-                type: 'POST',
-                data: {
-                    'postId': postId,
-                    'userId': userId,
-                    csrfmiddlewaretoken: '{{ csrf_token }}',
-                },
-                success: function (data) {
-                    console.log('Liked!');
-                    console.log(data);
-                },
-                error: function (data) {
-                    console.log(data);
-                },
-            });
-        }
-    </script>
     {% for post in posts %}
 
-    <!-- <div onclick="location.href='/post/{{ post.id }}/';" style="cursor: pointer; "
+    <div onclick="location.href='/post/{{ post.id }}/';" style="cursor: pointer; "
         onmouseover="this.getElementsByClassName('my-post')[0].style.backgroundColor = '#15181c';"
-        onmouseout=" this.getElementsByClassName('my-post')[0].style.backgroundColor='black' ;"> -->
+        onmouseout=" this.getElementsByClassName('my-post')[0].style.backgroundColor='black' ;">
+        <article class="media my-post">
+            <a href=" {% url 'user-profile' post.author.user.username %}">
+                <img class="rounded-circle post-author-img" src="{{ post.author.image.url }}">
+            </a>
+            <div class="media-body">
+                <div class="post-metadata">
+                    <a class="post-author-name mr-2" href="{% url 'user-profile' post.author.user.username %}">
+                        {{ post.author.user.username }}
+                    </a>
+                    <a class="post-metadata-text mr-2" href="https://www.google.pl/maps/place/{{ post.location }}">
+                        {{ post.location }}
+                    </a>
+                    <span class="post-metadata-text">
+                        {{ post.date_posted|time_since_date_posted }}
+                    </span>
+                </div>
 
-    <article class="media my-post">
+                <p class="article-content post-content">
+                    {{ post.content|render_tags_and_links }}
+                </p>
 
-        <a href="{% url 'user-profile' post.author.user.username %}"><img class="rounded-circle post-author-img"
-                src="{{ post.author.image.url }}"></a>
+                {% if post.image %}
+                <img class="post-image" src="{{ post.image.url }}">
+                {% endif %}
 
-        <div class="media-body">
-
-            <div class="post-metadata">
-                <a class="post-author-name mr-2" href="username">{{ post.author.user.username }}</a>
-                <a class="post-metadata-text mr-2"
-                    href="https://www.google.pl/maps/place/{{ post.location }}">{{ post.location }}</a>
-                <!-- <span class="post-metadata-text">{{ post.date_posted|date:"F d, Y" }}</span> -->
-                <span class="post-metadata-text">{{ post.date_posted|time_since_date_posted }}</span>
-            </div>
-
-            <p class="article-content post-content">{{ post.content|render_tags_and_links }}</p>
-
-
-            {% if post.image %}
-            <img class="post-image" src="{{ post.image.url }}">
-            {% endif %}
-            
-            <div class="post-likes-panel">
-                <div class="aligin-right">
-                    <div class="row">
-                        <div>
-                            <!-- <a href="likes" class="comment col-sec mr-2"><small>Likes: 123</small></a> -->
-                            <a id="lol" href="comments" class=" hvr-icon-wobble-horizontal comment col-sec mr-2"><i
-                                    class="far fa-comment hvr-icon"></i>
-                                <small>121</small></a>
-                        </div>
-                        <div>
-                            <a id="post-like-{{post.id}}" href="javascript:void(0);"
-                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
-                                onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
-                                onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');"
-                                class="hvr-icon-pulse-shrink {% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}">
-                                <i class="far fa-heart hvr-icon"></i>
-                                <small>123</small>
-                            </a>
-                            <!-- <a id="post-like-{{post.id}}" href="javascript:void(0);"
-                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
-                                class="{% if user.profile in post.likes.all %}liked{% endif %} heart hvr-icon-pulse-shrink">
-                                <i class="far fa-heart hvr-icon"></i>
-                                <small>123</small>
-                            </a> -->
-
-                            <!-- <a href="{% url 'like-post'  %}" class="heart hvr-icon-pulse-shrink"><i
-                                        class="far fa-heart hvr-icon"></i><small class="heart-humber">
-                                        123</small></a> -->
+                <div class="post-likes-panel">
+                    <div class="aligin-right">
+                        <div class="row">
+                            <div>
+                                {% has_user_commented user.pk post.pk as has_commented %}
+                                <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#comments"
+                                    class="col-sec mr-2 {% if has_commented %}commented{% else %}comment{% endif %}"
+                                    onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                                    onmouseover="$('#' + this.id).addClass('hvr-icon-wobble-horizontal');"
+                                    onmouseout="$('#' + this.id).removeClass('hvr-icon-wobble-horizontal');">
+                                    <i class="far fa-comment hvr-icon"></i>
+                                    <small>{{ post.comments.all.count }}</small>
+                                </a>
+                            </div>
+                            <div>
+                                <a id="post-like-{{post.id}}" href="javascript:void(0);"
+                                    class="{% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}"
+                                    onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                                    onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
+                                    onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');">
+                                    <i class="far fa-heart hvr-icon"></i>
+                                    <small id="post-likes-count">{{ post.likes.all.count }}</small>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-        </div>
-    </article>
-    <!-- </div> -->
+        </article>
+    </div>
 
     <div class="my-horizontal-bar"></div>
 
