@@ -45,11 +45,30 @@
                     <img class="rounded-circle author-img-sm" src="{{ post.author.image.url }}">
                 </a>
             </span>
+
             <div class="media-body">
                 <a class="author-name-bg" href="{% url 'user-profile' post.author.user.username %}">
                     {{ post.author.user.username }}
                 </a>
+
+                {% if post.location %}
+                <div>
+                    <small class="post-metadata-text">
+                        <i class="fa fa-globe-americas" aria-hidden="true"></i>
+                        <!-- <i class="fas fa-map-signs"></i> -->
+                        <!-- <i class="fa fa-location-arrow" aria-hidden="true"></i> -->
+                        <!-- <i class="fa fa-map" aria-hidden="true"></i> -->
+                        <!-- <i class="fa fa-map-marker" aria-hidden="true"></i> -->
+                    </small>
+                    <a class="post-metadata-text mr-2" href="https://www.google.pl/maps/place/{{ post.location }}">
+                        <small>
+                            {{ post.location }}
+                        </small>
+                    </a>
+                </div>
+                {% endif %}
             </div>
+
             {% if user.userprofile == post.author %}
             <div class="dropdown">
                 <a class="link-hover" data-toggle="dropdown">
@@ -72,7 +91,11 @@
                 <!-- TODO Fix all sizes of imgs -->
                 <img class="post-detail-image" src="{{ post.image.url }}">
                 {% endif %}
-                <div class="my-horizontal-bar mt-3"></div>
+
+                <div class="post-metadata-text post-metadata-date">
+                    {{ post.date_posted|date:"g:i A · M d, Y" }}
+                </div>
+                <div class="my-horizontal-bar post-metadata-date"></div>
                 <div class="justify-div">
                     <div>
                         {% has_user_commented user.pk post.pk as has_commented %}
@@ -107,15 +130,15 @@
                 <legend class="border-bottom mb-2">Reply</legend>
                 {{ form|crispy }}
             </fieldset>
-            <div class="form-group align-right" style="display: inline-block;">
+            <div class="form-group align-right mb-2" style="display: inline-block;">
                 <a class="create-comment link-hover btn my-purple-btn">Replay modal</a>
             </div>
-            <div class="form-group align-right" style="display: inline-block;">
+            <div class="form-group align-right mb-2" style="display: inline-block;">
                 <button class="btn my-purple-btn" type="submit">Replay</button>
             </div>
         </form>
         <div class="my-horizontal-bar mb-2"></div>
-        {% for comment in post.comments.all %}
+        {% for comment in post.comments.all|dictsortreversed:"date_created" %}
         <div class="post-detail-comment">
             <article class="media">
                 <span class="comment-author-img-sm-span">

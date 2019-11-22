@@ -39,6 +39,7 @@ a.author-name-bg:hover {
     font-weight: 400;
     color: #d9d9d9;
     margin-bottom: 8px;
+    margin-top: 8px;
 }
 
 .post-detail-likes-panel {
@@ -70,6 +71,10 @@ a.author-name-bg:hover {
   border-top-style: solid;
   border-top-width: 1px;
 
+}
+
+.post-metadata-date {
+    margin-top: 8px;
 }
 
 #comments {
