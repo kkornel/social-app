@@ -41,7 +41,7 @@ class CommentForm(forms.ModelForm):
 
 class CommentFormModal(BSModalForm):
     text = forms.CharField(max_length=280, label='', widget=forms.Textarea(attrs={
-        # 'rows': 30,
+        'rows': 4,
         # 'cols': 30,
         'style': 'resize:none;',
         'placeholder': 'Leave your replay',

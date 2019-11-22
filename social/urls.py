@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (CommentCreateViewModal, CommentDeleteViewModal,
                     PostCreateView, PostDeleteView, PostDetail, PostListView,
-                    PostUpdateView, UserProfileView, home, like_post)
+                    PostUpdateView, UserProfileView, home, like_post, PostDeleteViewModal)
 
 urlpatterns = [
     # path('', home, name='home'),
@@ -12,9 +12,18 @@ urlpatterns = [
     path('post/<int:pk>/', PostDetail.as_view(), name='post-detail'),
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
-    path('comment/delete/<int:pk>/',
-         CommentDeleteViewModal.as_view(), name='delete-comment'),
-    #
+
+    # AJAX
     path('like/', like_post, name='like-post'),
-    path('create/<int:pk>/', CommentCreateViewModal.as_view(), name='create-comment'),
+
+    # Modals
+    path('comment/delete/<int:pk>/',
+         CommentDeleteViewModal.as_view(), 
+         name='delete-comment'),
+    path('post/delete/<int:pk>/',
+         PostDeleteViewModal.as_view(), 
+         name='delete-post'),
+    path('create/<int:pk>/', 
+         CommentCreateViewModal.as_view(), 
+          name='create-comment'),
 ]

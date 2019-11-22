@@ -20,6 +20,15 @@ from .models import Comment, Like, Post
 
 logger = logging.getLogger(__name__)
 
+class PostDeleteViewModal(BSModalDeleteView):
+    model = Post
+    template_name = 'social/delete_post_modal.html'
+    success_message = 'Post deleted'
+    # success_message = 'Success: Comment deleted.'
+    success_url = '/'
+
+    # def get_success_url(self):
+    #     return self.request.META.get('HTTP_REFERER')
 
 class CommentCreateViewModal(BSModalCreateView):
     model = Post

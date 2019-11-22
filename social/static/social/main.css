@@ -340,6 +340,17 @@ a.commented:hover {
   background-color: #794bc4;
 }
 
+.my-purple-btn-light {
+  background-color: #794bc4;
+  color: #ffffff;
+
+}
+
+.my-purple-btn-light:hover {
+  background-color: #865dca;
+  color: #ffffff;
+}
+
 .comment-author-img {
   height: 54px;
   width: 54px;
