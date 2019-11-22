@@ -28,7 +28,7 @@ class PostEditViewModal(BSModalUpdateView):
     template_name = 'social/post_form_modal.html'
     form_class = PostFormModal
     success_message = ''
-    
+
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
 
@@ -42,6 +42,7 @@ class PostDeleteViewModal(BSModalDeleteView):
 
     # def get_success_url(self):
     #     return self.request.META.get('HTTP_REFERER')
+
 
 class CommentCreateViewModal(BSModalCreateView):
     model = Post
@@ -79,6 +80,7 @@ class CommentDeleteViewModal(BSModalDeleteView):
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
 
+
 @login_required
 def like_post(request):
     if request.method == 'POST':
@@ -90,25 +92,11 @@ def like_post(request):
 
         if userprofile in post.likes.all():
             post.likes.remove(userprofile)
-            logger.debug('Like removed!')
             # response = f'Like removed by {userprofile.user.username}#{userprofile.user.id} for Post#{post.id}. Likes left: {post.likes.count()}'
         else:
             post.likes.add(userprofile)
-            logger.debug('Like added!')
             # response = f'Like number {post.likes.count()} added for Post#{post.id} by {userprofile.user.username}#{userprofile.user.id}'
 
-        #  TODO remove after testing with multiple users
-        logger.debug(
-            f'### {userprofile.user.username}\'s likes: #######################')
-        for e in userprofile.likes.all():
-            logger.debug(' - ' + str(e))
-        logger.debug(f'### {post} likes: #######################')
-        for e in post.likes.all():
-            logger.debug(' - ' + str(e))
-
-        logger.debug('### All likes: #######################')
-        for e in Like.objects.all():
-            logger.debug(' - ' + str(e))
     response = post.likes.all().count()
     return HttpResponse(response)
 

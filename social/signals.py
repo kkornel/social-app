@@ -1,12 +1,30 @@
 import logging
 import os
 
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
+
+from users.decorators import func_log
 
 from .models import Post
 
 logger = logging.getLogger(__name__)
+
+
+@func_log
+@receiver(pre_save, sender=Post)
+def pre_save_post(sender, instance, *args, **kwargs):
+    if instance.pk and instance.image:
+        try:
+            old_img = Post.objects.get(pk=instance.pk).image
+        except:
+            return
+        else:
+            if old_img:
+                fullpath = old_img.path
+                logger.debug(f'Removing: {old_img}...')
+                old_img.delete(save=False)
+                logger.debug(f'Removed: {fullpath}.')
 
 
 @receiver(post_delete, sender=Post)

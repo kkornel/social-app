@@ -43,10 +43,6 @@ def has_user_commented(userId, postId):
         userprofile = user.userprofile
         post = Post.objects.get(pk=postId)
         has_commented = post.comments.all().filter(author=userprofile).count() > 0
-        logger.debug(user)
-        logger.debug(userprofile)
-        logger.debug(post)
-        logger.debug(has_commented)
         return has_commented
     except Exception:
         return False
