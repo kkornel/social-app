@@ -1,6 +1,6 @@
 import logging
 
-from bootstrap_modal_forms.generic import BSModalDeleteView
+from bootstrap_modal_forms.generic import BSModalCreateView, BSModalDeleteView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import (HttpResponse, HttpResponseForbidden,
@@ -15,16 +15,43 @@ from django.views.generic.edit import FormMixin
 
 from users.models import MyUser, UserProfile
 
-from .forms import CommentForm, PostForm
+from .forms import CommentForm, CommentFormModal, PostForm
 from .models import Comment, Like, Post
 
 logger = logging.getLogger(__name__)
 
 
-class CommentDeleteView(BSModalDeleteView):
+class CommentCreateViewModal(BSModalCreateView):
+    model = Post
+    template_name = 'social/comment_form_modal.html'
+    form_class = CommentFormModal
+    success_message = ''
+    # success_message = 'Success: Commented.'
+
+    def form_valid(self, form):
+        # Here, unlike the solution in CommentCreateView, we have to query
+        # for the post object, because it is not attached to the request.
+        # So we use kwargs to get pk of that post object.
+        form.instance.author = self.request.user.userprofile
+        form.instance.post = Post.objects.get(pk=self.kwargs['pk'])
+        form.save()
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+
+class CommentDeleteViewModal(BSModalDeleteView):
     model = Comment
     template_name = 'social/delete_comment.html'
-    success_message = 'Success: Comment deleted.'
+    success_message = None
+    # success_message = 'Success: Comment deleted.'
     # success_url = reverse_lazy('post-detail')
 
     def get_success_url(self):

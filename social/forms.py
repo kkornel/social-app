@@ -1,5 +1,6 @@
 import logging
 
+from bootstrap_modal_forms.forms import BSModalForm
 from django import forms
 
 from .models import Comment, Post
@@ -36,3 +37,17 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['text']
         # widgets = {'text': forms.Textarea(attrs={'placeholder': 'Comment this post'}), }
+
+
+class CommentFormModal(BSModalForm):
+    text = forms.CharField(max_length=280, label='', widget=forms.Textarea(attrs={
+        # 'rows': 30,
+        # 'cols': 30,
+        'style': 'resize:none;',
+        'placeholder': 'Leave your replay',
+    }),
+    )
+
+    class Meta:
+        model = Comment
+        fields = ['text']

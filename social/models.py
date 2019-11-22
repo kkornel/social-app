@@ -27,8 +27,9 @@ class Post(models.Model):
     # It is 'one to many' relation, because 1 user can have multiple posts.
     # It is done by ForeginKey.
     # on_delete means what happens when user is deleted, CASCADE means delete all his posts.
-    author = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE, related_name='posts')
+    author = models.ForeignKey(UserProfile,
+                               on_delete=models.CASCADE,
+                               related_name='posts')
     content = models.TextField(max_length=280,
                                validators=[MaxLengthValidator(280)])
     # content = models.CharField(max_length=280)
@@ -36,8 +37,10 @@ class Post(models.Model):
     location = models.CharField(max_length=40, blank=True)
     image = models.ImageField(upload_to=get_file_path, blank=True)
     # likes = models.ManyToManyField(Profile, blank=True)
-    likes = models.ManyToManyField(
-        UserProfile, blank=True, through='Like', related_name='likes')
+    likes = models.ManyToManyField(UserProfile,
+                                   blank=True,
+                                   through='Like',
+                                   related_name='likes')
 
     """ Resizing images on local storage """
 
@@ -78,10 +81,12 @@ class Like(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(
-        Post, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(
-        UserProfile, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post,
+                             on_delete=models.CASCADE,
+                             related_name='comments')
+    author = models.ForeignKey(UserProfile,
+                               on_delete=models.CASCADE,
+                               related_name='comments')
     text = models.TextField(max_length=280)
     date_created = models.DateTimeField(auto_now_add=True)
 

@@ -10,6 +10,14 @@
 {% block js_block %}
 <script src="{% static 'social/scripts.js' %}"></script>
 <script>
+    $(document).ready(function () {
+
+        $(".create-comment").modalForm({
+            formURL: "{% url 'create-comment' post.pk %}"
+        });
+
+    });
+
     $(function () {
         $(".delete-comment").each(function () {
             $(this).modalForm({ formURL: $(this).data('id') });
@@ -42,7 +50,6 @@
                     {{ post.author.user.username }}
                 </a>
             </div>
-
             {% if user.userprofile == post.author %}
             <div class="dropdown">
                 <a class="link-hover" data-toggle="dropdown">
@@ -100,7 +107,10 @@
                 <legend class="border-bottom mb-2">Reply</legend>
                 {{ form|crispy }}
             </fieldset>
-            <div class="form-group align-right">
+            <div class="form-group align-right" style="display: inline-block;">
+                <a class="create-comment link-hover btn my-purple-btn">Replay modal</a>
+            </div>
+            <div class="form-group align-right" style="display: inline-block;">
                 <button class="btn my-purple-btn" type="submit">Replay</button>
             </div>
         </form>
@@ -144,8 +154,8 @@
             </article>
         </div>
         {% empty %}
-        <p class="post-detail-content">
-            No comments so far
+        <p class="comment-content">
+            No comments here
         </p>
         {% endfor %}
     </div>
