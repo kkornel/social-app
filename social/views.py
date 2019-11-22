@@ -49,7 +49,7 @@ class CommentCreateViewModal(BSModalCreateView):
 
 class CommentDeleteViewModal(BSModalDeleteView):
     model = Comment
-    template_name = 'social/delete_comment.html'
+    template_name = 'social/delete_comment_modal.html'
     success_message = None
     # success_message = 'Success: Comment deleted.'
     # success_url = reverse_lazy('post-detail')

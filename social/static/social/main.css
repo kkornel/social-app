@@ -147,7 +147,13 @@ a.author-name-sm:hover {
 color: #ffffff;
 }
 
+.light-icon {
+    color: #6e767d;
+}
 
+.light-icon:hover {
+    color: #d9d9d9;
+}
 
 .post-metadata-text {
   font-weight: 400;

@@ -4,7 +4,8 @@
 {% load crispy_forms_tags %}
 
 {% block stylesheet_block %}
-<link rel="stylesheet" type="text/css" href="{% static 'social/post-details.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'social/post-detail.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'social/modal.css' %}">
 {% endblock stylesheet_block %}
 
 {% block js_block %}
@@ -31,7 +32,7 @@
 {% block content %}
 <div class="modal fade" tabindex="-1" role="dialog" id="modal">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content my-modal-content">
 
         </div>
     </div>
