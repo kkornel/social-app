@@ -25,13 +25,15 @@ class PostForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
+    # If using CrispyForms, the only way to change background of textarea
+    # is to define style here. With CSS selector it's not working.
     text = forms.CharField(max_length=280, label='', widget=forms.Textarea(attrs={
         'rows': 3,
         'cols': 10,
-        'style': 'resize:none;',
-        'placeholder': 'Leave your replay',
-    }),
-    )
+        # 'style': 'resize:none;',
+        'style': 'resize:none; background-color: #000000; color: #d9d9d9;',
+        'placeholder': 'Leave your comment',
+    }))
 
     class Meta:
         model = Comment
@@ -44,10 +46,29 @@ class CommentFormModal(BSModalForm):
         'rows': 4,
         # 'cols': 30,
         'style': 'resize:none;',
-        'placeholder': 'Leave your replay',
-    }),
-    )
+        'placeholder': 'Leave your feedback',
+    }))
 
     class Meta:
         model = Comment
         fields = ['text']
+
+
+class PostFormModal(BSModalForm):
+    # If using CrispyForms, the only way to change background of textarea
+    # is to define style here. With CSS selector it's not working.
+    content = forms.CharField(max_length=280, widget=forms.Textarea(attrs={
+        'rows': 4,
+        # 'cols': 30,
+        # 'style': 'resize:none;',
+        'style': 'resize:none; background-color: #15181c; color: #d9d9d9;',
+        'placeholder': 'Text of your post',
+    }))
+    # To remove 'Currently photo' and 'Clear' field, 
+    # use this after required: widget=forms.FileInput
+    image = forms.ImageField(
+        label='Photo', required=False, widget=forms.FileInput)
+
+    class Meta:
+        model = Post
+        fields = ['content', 'location', 'image']

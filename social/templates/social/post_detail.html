@@ -21,6 +21,10 @@
             formURL: "{% url 'delete-post' post.pk %}"
         });
 
+
+        $(".edit-post").modalForm({
+            formURL: "{% url 'edit-post' post.pk %}"
+        });
     });
 
     $(function () {
@@ -79,13 +83,22 @@
                 <a class="link-hover" data-toggle="dropdown">
                     <i class="fa fa-chevron-down dark-icon" aria-hidden="true"></i>
                 </a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'post-update' post.pk %}">Edit</a>
+                <div class="dropdown-menu my-drop-menu">
+                    <a class="dropdown-item my-drop-menu-item" href="{% url 'post-update' post.pk %}">Edit</a>
+                    <span class="my-drop-menu-item-span">
+                        <a class="my-drop-menu-item dropdown-item edit-post link-hover"
+                            data-id="{% url 'edit-post' post.pk %}">
+                            Edit Modal
+                        </a>
+                    </span>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'post-delete' post.pk %}">Delete</a>
-                    <a class="dropdown-item delete-post link-hover" data-id="{% url 'delete-post' post.pk %}">
-                        Delete Modal
-                    </a>
+                    <a class="dropdown-item my-drop-menu-item" href="{% url 'post-delete' post.pk %}">Delete</a>
+                    <span class="my-drop-menu-item-span">
+                        <a class="dropdown-item delete-post link-hover my-drop-menu-item"
+                            data-id="{% url 'delete-post' post.pk %}">
+                            Delete Modal
+                        </a>
+                    </span>
                 </div>
             </div>
             {% endif %}
@@ -135,7 +148,7 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <fieldset class="form-group mb-0">
-                <legend class="border-bottom mb-2">Reply</legend>
+                <legend class="border-bottom mb-2">Comments</legend>
                 {{ form|crispy }}
             </fieldset>
             <div class="form-group align-right mb-2" style="display: inline-block;">
@@ -150,7 +163,7 @@
         <div class="post-detail-comment">
             <article class="media">
                 <span class="comment-author-img-sm-span">
-                    <a href=" {% url 'user-profile' comment.author.user.username %}">
+                    <a href="{% url 'user-profile' comment.author.user.username %}">
                         <img class="rounded-circle author-img-sm" src="{{ comment.author.image.url }}">
                     </a>
                 </span>

@@ -1,6 +1,8 @@
 import logging
 
-from bootstrap_modal_forms.generic import BSModalCreateView, BSModalDeleteView
+from bootstrap_modal_forms.generic import (BSModalCreateView,
+                                           BSModalDeleteView,
+                                           BSModalUpdateView)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import (HttpResponse, HttpResponseForbidden,
@@ -15,10 +17,21 @@ from django.views.generic.edit import FormMixin
 
 from users.models import MyUser, UserProfile
 
-from .forms import CommentForm, CommentFormModal, PostForm
+from .forms import CommentForm, CommentFormModal, PostForm, PostFormModal
 from .models import Comment, Like, Post
 
 logger = logging.getLogger(__name__)
+
+
+class PostEditViewModal(BSModalUpdateView):
+    model = Post
+    template_name = 'social/post_form_modal.html'
+    form_class = PostFormModal
+    success_message = ''
+    
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
 
 class PostDeleteViewModal(BSModalDeleteView):
     model = Post

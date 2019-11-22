@@ -63,6 +63,30 @@ body {
   cursor: pointer;
 }
 
+.my-drop-menu {
+    background-color: #000000;
+    color: #d9d9d9;
+    border-color: #2f3336;;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 4px;
+}
+
+.my-drop-menu-item {
+    color: #d9d9d9;
+    background-color: #000000; 
+}
+
+.my-drop-menu-item:hover {
+    background-color: #2f3336; 
+    color: white;
+}
+
+.my-drop-menu-item-span:hover {
+    background-color: #2f3336; 
+    color: white;
+}
+
 
 .my-main-column {
   /* background-color: #0c50b6; */
@@ -161,7 +185,6 @@ color: #ffffff;
 }
 
 a.post-metadata-text:hover {
-  font-size: 15px;
   font-weight: 400;
   color: #767e85;
 }
