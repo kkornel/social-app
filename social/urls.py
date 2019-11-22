@@ -24,7 +24,6 @@ urlpatterns = [
     path('post/<int:pk>/del/',
          PostDeleteViewModal.as_view(), 
          name='delete-post'),
-    # path('create/<int:pk>/', 
     path('post/<int:pk>/comment/', 
          CommentCreateViewModal.as_view(), 
          name='create-comment'),
