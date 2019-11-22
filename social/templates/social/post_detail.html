@@ -25,8 +25,9 @@
 
     $(function () {
         $(".delete-comment").each(function () {
-            $(this).modalForm({ formURL: $(this).data('id') });
-            console.log($(this).data('id'));
+            $(this).modalForm({
+                formURL: $(this).data('id')
+            });
         });
     });
 </script>
