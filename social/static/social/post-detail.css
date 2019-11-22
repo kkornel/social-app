@@ -1,3 +1,43 @@
+.nav-back-from-post {
+    padding-top: 5px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    border-bottom-color: #2f3336;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    
+    border-left-color: #2f3336;
+    border-left-style: solid;
+    border-left-width: 1px;
+
+    border-right-color: #2f3336;
+    border-right-style: solid;
+    border-right-width: 1px;
+
+    border-top-color: #2f3336;
+    border-top-style: solid;
+    border-top-width: 1px;
+}
+
+.nav-back-span-icon {
+    font-size: 24px;
+}
+
+a.nav-back-span-a {
+    color: #3c2562;
+}
+
+a.nav-back-span-a:hover {
+    color: #794bc4;
+    text-decoration: none;
+}
+
+.nav-back-span-text {
+    font-size: 19px;
+    font-weight: 800;
+    margin-left: 15px;
+}
+
 .justify-div {
     display: flex; 
     justify-content: space-around;
