@@ -1,8 +1,9 @@
 from django.urls import path
 
 from .views import (CommentCreateViewModal, CommentDeleteViewModal,
-                    PostCreateView, PostDeleteView, PostDetail, PostListView,
-                    PostUpdateView, UserProfileView, home, like_post, PostDeleteViewModal)
+                    PostCreateView, PostDeleteView, PostDeleteViewModal,
+                    PostDetail, PostListView, PostUpdateView, UserProfileView,
+                    home, like_post)
 
 urlpatterns = [
     # path('', home, name='home'),
@@ -17,13 +18,14 @@ urlpatterns = [
     path('like/', like_post, name='like-post'),
 
     # Modals
-    path('comment/delete/<int:pk>/',
+    path('post/comment/<int:pk>/delete/',
          CommentDeleteViewModal.as_view(), 
          name='delete-comment'),
-    path('post/delete/<int:pk>/',
+    path('post/<int:pk>/del/',
          PostDeleteViewModal.as_view(), 
          name='delete-post'),
-    path('create/<int:pk>/', 
+    # path('create/<int:pk>/', 
+    path('post/<int:pk>/comment/', 
          CommentCreateViewModal.as_view(), 
-          name='create-comment'),
+         name='create-comment'),
 ]
