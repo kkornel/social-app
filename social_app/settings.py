@@ -33,7 +33,7 @@ SECRET_KEY = os.environ.get('SECRET_SOCIAL_APP_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = (os.environ.get('DEBUG_VARIABLE') == "True")
+DEBUG = (os.environ.get('DEBUG_VARIABLE') == 'True')
 
 ALLOWED_HOSTS = ['192.168.0.199', 'localhost', '127.0.0.1']
 
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'bootstrap_modal_forms',
     'widget_tweaks',
+    'storages',
     # Local
     'users.apps.UsersConfig',
     'social.apps.SocialConfig',
@@ -221,6 +222,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
+#  TODO delete after, for development only.
+LOCALHOST_URL_127 = 'http://127.0.0.1:8000'
+LOCALHOST_URL_0 = 'http://0.0.0.0:8000'
+
+
 # Keys for RECAPTCHA.
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
@@ -234,6 +240,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 
+
+# REST Permissions
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
@@ -242,3 +250,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ]
 }
+
+
+#  For AWS S3 Storage
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+
+AWS_3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+#

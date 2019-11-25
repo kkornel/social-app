@@ -1,15 +1,17 @@
+import io
 import logging
 import os
 import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.core.files.storage import default_storage as storage
 from django.db import models
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from PIL import Image
-from rest_framework.authtoken.models import Token
+
+from social_app.utils import get_file_path_folder
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +23,8 @@ logging.getLogger('urllib3').setLevel(logging.CRITICAL)
 
 
 def get_file_path(instance, filename):
-    ext = filename.split('.')[-1]
-    filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('profile_pics/', filename)
+    folder_name = 'profile_images/'
+    return get_file_path_folder(instance, folder_name, filename)
 
 
 class MyUserManager(BaseUserManager):
@@ -123,50 +124,55 @@ class UserProfile(models.Model):
     bio = models.CharField(max_length=300)
     city = models.CharField(max_length=100)
     website = models.CharField(max_length=40)
-    image = models.ImageField(default='default.jpg', upload_to=get_file_path)
+    image = models.ImageField(default='default.jpg',
+                              upload_to=get_file_path)
+
+    def save(self, *args, **kwargs):
+        """ Resizing images on S3.
+        Hardcoded output_size.
+        """
+        super().save(*args, **kwargs)
+
+        if not self.image:
+            return
+
+        img_read = storage.open(self.image.name, 'r')
+        img = Image.open(img_read)
+
+        if img.height > 300 or img.width > 300:
+            extension = os.path.splitext(self.image.name)[1].lower()
+
+            if extension in ['.jpeg', '.jpg']:
+                format = 'JPEG'
+            if extension in ['.png']:
+                format = 'PNG'
+
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            in_mem_file = io.BytesIO()
+            img.save(in_mem_file, format=format)
+            img_write = storage.open(self.image.name, 'w+')
+            img_write.write(in_mem_file.getvalue())
+            img_write.close()
+
+        img_read.close()
 
     def __str__(self):
         return f'Profile#{self.id} of {self.user.username}#{self.user.id}'
 
-    """ Resizing images on local storage """
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        logger.debug(self.image.path)
-        img = Image.open(self.image.path)
-        logger.debug(self.image.path)
-
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)
-            logger.debug(self.image.path)
-            img.save(self.image.path)
-
-    """ Resizing images on S3 """
-
     # def save(self, *args, **kwargs):
-    #         super().save(*args, **kwargs)
-    #         logger.debug("Saving image!")
-    #         img_read = storage.open(self.image.name, 'r')
-    #         logger.debug(img_read)
-    #         img = Image.open(img_read)
-    #         logger.debug(img)
+        """Resizing images on local storage.
+        Hardcoded output_size.
+        """
+        # super().save(*args, **kwargs)
 
-    #         if img.height > 300 or img.width > 300:
-    #             logger.debug("Resizing!")
-    #             output_size = (300, 300)
-    #             img.thumbnail(output_size)
-    #             in_mem_file = io.BytesIO()
-    #             img.save(in_mem_file, format='JPEG')
-    #             img_write = storage.open(self.image.name, 'w+')
-    #             img_write.write(in_mem_file.getvalue())
-    #             img_write.close()
-    #             logger.debug("Resized successfully!")
+        # if not self.image:
+        #     return
 
-    #         img_read.close()
+        # img = Image.open(self.image.path)
 
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
+        # if img.height > 510 or img.width > 515:
+        #     # TODO split in 2 mote ifs?
+        #     output_size = (510, 515)
+        #     img.thumbnail(output_size)
+        #     img.save(self.image.path)

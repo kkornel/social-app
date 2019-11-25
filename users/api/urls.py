@@ -1,9 +1,9 @@
 from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import (ApiUserProfileView, TestView, UserProfileCreateView,
-                    UserProfilePostListCreateView, UserProfileView,
-                    registration_view)
+from .views import (ApiUserProfileView, GetAllUsersApiView, TestView,
+                    UserProfileCreateView, UserProfilePostListCreateView,
+                    UserProfileView, registration_view)
 
 app_name = 'users'
 
@@ -15,4 +15,8 @@ urlpatterns = [
     path('create/', UserProfileCreateView.as_view(), name='create'),
     path('list-create/', UserProfilePostListCreateView.as_view(), name='list-create'),
     path('getprofile/<token>/', ApiUserProfileView.as_view(), name='getprofile'),
+
+    # Development
+    path('users/', GetAllUsersApiView.as_view(), name='get-all-users'),
+
 ]

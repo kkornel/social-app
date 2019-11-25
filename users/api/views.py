@@ -18,6 +18,13 @@ from .serializers import RegistrationSerializer, UserProfileSerializer
 logger = logging.getLogger(__name__)
 
 
+class GetAllUsersApiView(generics.ListAPIView):
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+
+    permission_classes = (AllowAny, )
+
+
 @api_view(['POST'])
 @permission_classes((AllowAny, ))
 def registration_view(request):

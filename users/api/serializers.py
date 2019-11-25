@@ -1,6 +1,7 @@
 import logging
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth import password_validation
 from rest_framework import serializers
 
@@ -10,9 +11,15 @@ logger = logging.getLogger(__name__)
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    # image = serializers.SerializerMethodField('get_image_path')
+
     class Meta:
         model = UserProfile
         fields = ['user', 'bio', 'city', 'website', 'image']
+
+    # def get_image_path(self, userprofile):
+        # image = settings.LOCALHOST_URL_0 + userprofile.image.url;
+        # return image
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

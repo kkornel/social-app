@@ -29,6 +29,7 @@ urlpatterns = [
 
     # REST FRAMEWORK URLS
     path('api/users/', include('users.api.urls')),
+    path('api/', include('social.api.urls')),
     # django.rest.auth
     path('rest-auth/', include('rest_auth.urls')),
 
