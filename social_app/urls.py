@@ -73,6 +73,12 @@ urlpatterns = [
              template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
     path('profile/', users_views.userprofile, name='profile'),
+    path('edit-profile/', users_views.userprofile, name='edit_profile'),
+
+    # Modals
+    path('update-profile/',
+         users_views.edit_userprofile,
+         name='update_profile'),
 
 ]
 

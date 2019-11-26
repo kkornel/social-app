@@ -4,16 +4,20 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage, send_mail
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from .admin import UserCreationForm
 from .decorators import check_recaptcha, func_log
-from .forms import CaptchaPasswordResetForm
-from .models import MyUser
+from .forms import (CaptchaPasswordResetForm, MyUserUpdateForm,
+                    UserProfileUpdateForm)
+from .models import MyUser, UserProfile
 from .tokens import account_activation_token
+
+# from app.models import Model
+
 
 logger = logging.getLogger(__name__)
 
@@ -137,25 +141,55 @@ def reset_password(request):
 
 @login_required
 def userprofile(request):
-    # if request.method == "POST":
-    #     user_form = UserUpdateForm(request.POST, instance=request.user)
-    #     profile_form = ProfileUpdateForm(
-    #         request.POST, request.FILES, instance=request.user.profile)
+    if request.method == "POST":
+        myuser_form = MyUserUpdateForm(request.POST,
+                                       instance=request.user)
+        profile_form = UserProfileUpdateForm(request.POST,
+                                             request.FILES,
+                                             instance=request.user.userprofile)
 
-    #     if user_form.is_valid() and profile_form.is_valid():
-    #         user_form.save()
-    #         profile_form.save()
-    #         messages.success(request, f'Your account has been updated!')
-    #         return redirect('profile')
+        if myuser_form.is_valid() and profile_form.is_valid():
+            myuser_form.save()
+            profile_form.save()
+            messages.success(request, f'Your account has been updated!')
+            return redirect('profile')
 
-    # else:
-    #     user_form = UserUpdateForm(instance=request.user)
-    #     profile_form = ProfileUpdateForm(instance=request.user.profile)
+    else:
+        myuser_form = MyUserUpdateForm(instance=request.user)
+        profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
 
-    # context = {
-    #     'user_form': user_form,
-    #     'profile_form': profile_form,
-    # }
-    context = {}
+    context = {
+        'myuser_form': myuser_form,
+        'profile_form': profile_form,
+    }
 
-    return render(request, 'users/profile.html', context)
+    return render(request, 'users/edit_profile.html', context)
+
+
+@login_required
+def edit_userprofile(request):
+    if request.method == "POST":
+        myuser_form = MyUserUpdateForm(request.POST,
+                                       instance=request.user)
+        profile_form = UserProfileUpdateForm(request.POST,
+                                             request.FILES,
+                                             instance=request.user.userprofile)
+
+        if myuser_form.is_valid() and profile_form.is_valid():
+            status = profile_form.cleaned_data['delete_current_image']
+            logger.debug(status)
+            myuser_form.save()
+            profile_form.save()
+            messages.success(request, f'Your account has been updated!')
+            return redirect('profile')
+
+    else:
+        myuser_form = MyUserUpdateForm(instance=request.user)
+        profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
+
+    context = {
+        'myuser_form': myuser_form,
+        'profile_form': profile_form,
+    }
+
+    return render(request, 'users/edit_profile_modal.html', context)

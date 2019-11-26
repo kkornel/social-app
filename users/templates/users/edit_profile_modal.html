@@ -1,0 +1,108 @@
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content my-modal-content">
+
+        </div>
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="modal-header">
+        <h3 class="modal-title">Update your profile</h3>
+        <a class="delete-comment link-hover" data-dismiss="modal">
+            <i class="fas fa-times light-icon "></i>
+        </a>
+    </div>
+
+    <div class="modal-body">
+        <div class="{% if form.non_field_errors %}invalid{% endif %}">
+            {% for error in form.non_field_errors %}
+            {{ error }}
+            {% endfor %}
+        </div>
+
+        {% for field in myuser_form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% render_field field class="form-control" placeholder=field.label %}
+            <div class="{% if field.errors %} invalid{% endif %}">
+                {% for error in field.errors %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- {% for field in profile_form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% render_field field class="form-control" placeholder=field.label %}
+            <div class="{% if field.errors %} invalid{% endif %}">
+                {% for error in field.errors %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <fieldset class="form-group">
+            {{ profile_form|crispy }}
+        </fieldset> -->
+
+        {{ profile_form|crispy }}
+    </div>
+
+    <!-- <div class="form-group">
+        <button class="btn btn-outline-info">Delete current photo</button>
+    </div>
+
+    <div class="">
+        <a class="edit-profile link-hover btn my-purple-btn">Delete current photo</a>
+    </div> -->
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn my-purple-btn-light">Update</button>
+    </div>
+</form>
+
+<!-- <form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h3 class="modal-title">Edit your post</h3>
+        <a class="delete-comment link-hover" data-dismiss="modal">
+            <i class="fas fa-times light-icon "></i>
+        </a>
+    </div>
+
+    <div class="modal-body">
+        <div class="{% if form.non_field_errors %}invalid{% endif %}">
+            {% for error in form.non_field_errors %}
+            {{ error }}
+            {% endfor %}
+        </div>
+
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% render_field field class="form-control" placeholder=field.label %}
+            <div class="{% if field.errors %} invalid{% endif %}">
+                {% for error in field.errors %}
+                <p class="help-block">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn my-purple-btn-light">Update</button>
+    </div> -->
+
+</form>

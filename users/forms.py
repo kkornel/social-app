@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django.contrib.auth.views import PasswordResetConfirmView
 
-from .models import UserProfile
+from .models import MyUser, UserProfile
 
 
 class CaptchaPasswordResetForm(PasswordResetForm):
@@ -27,7 +27,41 @@ class CustomSetPasswordForm(SetPasswordForm):
             attrs={'placeholder': 'New password confirmation'}))
 
 
+class MyUserUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = MyUser
+        fields = ['email']
+
+
 class UserProfileUpdateForm(forms.ModelForm):
+    bio = forms.CharField(required=False,
+                          max_length=300,
+                          widget=forms.Textarea(attrs={
+                              'rows': 5,
+                              'cols': 10,
+                              'style': 'resize:none;',
+                              'placeholder': 'Tell others a little bit about yourself!',
+                          }))
+    city = forms.CharField(required=False,
+                           max_length=100,
+                           widget=forms.TextInput(attrs={
+                               'placeholder': 'Oslo, Norway',
+                           }))
+
+    website = forms.CharField(required=False,
+                              max_length=30,
+                              widget=forms.TextInput(attrs={
+                                  'placeholder': 'Do you have any domain?',
+                              }))
+
+    image = forms.ImageField(label='Photo',
+                             required=False,
+                             widget=forms.FileInput)
+
+    delete_current_image = forms.BooleanField(label='Delete current image',
+                                              required=False)
+
     class Meta:
         model = UserProfile
-        fields = ['image']
+        fields = ['bio', 'city', 'website', 'image']
