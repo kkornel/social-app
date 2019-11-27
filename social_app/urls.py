@@ -74,7 +74,14 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(
              template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
+
+
+
+
+
+
     path('profile/', users_views.userprofile, name='profile'),
+
 
     # Modals
     path('edit-profile/<int:pk>/change-email/',
@@ -83,13 +90,6 @@ urlpatterns = [
     path('edit-profile/<int:pk>/',
          users_views.UserProfileEditViewModal.as_view(),
          name='edit-profile'),
-    # path('edit-profile/<int:pk>/',
-    #      users_views.MyUserEditViewModal.as_view(),
-    #      name='edit-profile'),
-    # path('edit-profile/',
-    #      users_views.edit_userprofile,
-    #      name='edit-profile'),
-
 ]
 
 # https://docs.djangoproject.com/en/2.1/howto/static-files/#serving-files-uploaded-by-a-user-during-development
