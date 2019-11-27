@@ -5,8 +5,6 @@ import requests
 from django.conf import settings
 from django.contrib import messages
 
-from social_app import settings
-
 logger = logging.getLogger(__name__)
 
 

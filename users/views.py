@@ -1,8 +1,12 @@
 import logging
 
+# from app.models import Model
+from bootstrap_modal_forms.generic import BSModalUpdateView
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.files import File
+from django.core.files.storage import default_storage as storage
 from django.core.mail import EmailMessage, send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -12,12 +16,10 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .admin import UserCreationForm
 from .decorators import check_recaptcha, func_log
 from .forms import (CaptchaPasswordResetForm, MyUserUpdateForm,
-                    UserProfileUpdateForm)
+                    MyUserUpdateFormModal, UserProfileUpdateForm,
+                    UserProfileUpdateFormModal)
 from .models import MyUser, UserProfile
 from .tokens import account_activation_token
-
-# from app.models import Model
-
 
 logger = logging.getLogger(__name__)
 
@@ -139,6 +141,7 @@ def reset_password(request):
     return render(request, 'users/password_reset.html', {'form': form})
 
 
+#  TODO replace with CBV detail + listview
 @login_required
 def userprofile(request):
     if request.method == "POST":
@@ -163,7 +166,7 @@ def userprofile(request):
         'profile_form': profile_form,
     }
 
-    return render(request, 'users/edit_profile.html', context)
+    return render(request, 'users/profile.html', context)
 
 
 @login_required
@@ -176,8 +179,24 @@ def edit_userprofile(request):
                                              instance=request.user.userprofile)
 
         if myuser_form.is_valid() and profile_form.is_valid():
-            status = profile_form.cleaned_data['delete_current_image']
-            logger.debug(status)
+            # TODO delete img
+            delete_current_image = profile_form.cleaned_data['delete_current_image']
+            logger.debug(delete_current_image)
+            if delete_current_image:
+                userprofile = request.user.userprofile
+                current_image = userprofile.image
+                if current_image.name != 'default.jpg':
+                    logger.debug("current_image.name != 'default.jpg'")
+                    userprofile.image.delete(save=False)
+                    logger.debug("deleted old")
+                    new = storage.open('default.jpg').read()
+                    logger.debug(new)
+                    logger.debug(type(new))
+                    filee = File(new)
+                    logger.debug(filee)
+                    logger.debug(type(filee))
+                    # userprofile.image.save('default.jpg', filee)
+                    logger.debug('lil')
             myuser_form.save()
             profile_form.save()
             messages.success(request, f'Your account has been updated!')
@@ -192,4 +211,56 @@ def edit_userprofile(request):
         'profile_form': profile_form,
     }
 
-    return render(request, 'users/edit_profile_modal.html', context)
+    return render(request, 'users/profile_edit_modal.html', context)
+
+
+class MyUserEditViewModal(BSModalUpdateView):
+    model = MyUser
+    template_name = 'users/profile_edit_modal.html'
+    form_class = MyUserUpdateFormModal
+    success_message = 'profile'
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+
+class UserProfileEditViewModal(BSModalUpdateView):
+    model = UserProfile
+    template_name = 'users/profile_edit_modal.html'
+    form_class = UserProfileUpdateFormModal
+    success_message = 'profile'
+
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
+
+    def post(self, request, *args, **kwargs):
+        # if not request.user.is_authenticated:
+        #     return HttpResponseForbidden()
+        logger.debug('post')
+        logger.debug(dir(self.get_form()))
+        logger.debug(dir(self.get_form().instance))
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        logger.debug('form_valid')
+        delete_current_image = form.cleaned_data['delete_current_image']
+        image = form.cleaned_data['image']
+        logger.debug(image)
+        logger.debug(type(image))
+        logger.debug(delete_current_image)
+        if delete_current_image:
+            userprofile = self.request.user.userprofile
+            current_image = userprofile.image
+            if current_image.name != 'default.jpg':
+                logger.debug("current_image.name != 'default.jpg'")
+                userprofile.image.delete(save=False)
+                logger.debug("deleted old")
+                new = storage.open('default.jpg').read()
+                # logger.debug(new)
+                logger.debug(type(new))
+                filee = File(new)
+                # logger.debug(filee)
+                logger.debug(type(filee))
+                userprofile.image.save('default.jpg', filee)
+                logger.debug('lil')
+        return super().form_valid(form)

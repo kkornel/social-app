@@ -6,7 +6,7 @@ from django.contrib import admin, messages
 from django.contrib.auth import (authenticate, get_user_model,
                                  password_validation)
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
+from django.contrib.auth.forms import (AuthenticationForm,
                                        ReadOnlyPasswordHashField)
 from django.contrib.auth.models import Group
 from django.forms.widgets import EmailInput, PasswordInput, TextInput
@@ -86,7 +86,6 @@ class UserCreationForm(forms.ModelForm):
     A form for creating new users. Includes all the required
     fields, plus a repeated password.
     """
-
     email = forms.EmailField(
         label='', widget=forms.EmailInput(
             attrs={'placeholder': 'Email address'}),
@@ -190,10 +189,10 @@ class UserAdmin(BaseUserAdmin):
 
 
 # Now register the new UserAdmin...
-admin.site.register(MyUser, UserAdmin)
+admin.site.register(MyUser,
+                    UserAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)
-
 
 admin.site.register(UserProfile)

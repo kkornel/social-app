@@ -5,7 +5,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
-from .decorators import func_log
 from .models import UserProfile
 
 logger = logging.getLogger(__name__)
@@ -16,25 +15,23 @@ logging.getLogger('s3transfer').setLevel(logging.CRITICAL)
 logging.getLogger('urllib3').setLevel(logging.CRITICAL)
 
 
-@func_log
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_profile(sender, instance, created, **kwargs):
-    logger.debug(
-        f'create_user_profile signal: sender:{sender}, instance:{instance}, created:{created}, kwargs:{kwargs}')
+    logger.debug('Signal received: create_user_profile')
+    logger.debug(f'created: {created}')
     if created:
         UserProfile.objects.create(user=instance)
 
 
-@func_log
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def save_user_profile(sender, instance, **kwargs):
-    logger.debug(
-        f'save_user_profile signal: sender:{sender}, instance:{instance}, kwargs:{kwargs}')
+    logger.debug('Signal received: save_user_profile')
     instance.userprofile.save()
 
 
-#  TODO if sth fails, i moved it from users.models
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
+    logger.debug('Signal received: create_auth_token')
+    logger.debug(f'created: {created}')
     if created:
         Token.objects.create(user=instance)

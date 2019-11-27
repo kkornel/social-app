@@ -1,27 +1,80 @@
-{% extends "social/base.html" %}
+{% extends "social/base_sidebar.html" %}
+{% load static %}
+{% load filters %}
 {% load crispy_forms_tags %}
 
-{% block base_content %}
-<div class="content-section">
-    <div class="media">
-        <img class="rounded-circle account-img" src="{{ user.userprofile.image.url }}">
-        <div class="media-body">
-            <h2 class="account-heading"> {{ user.username }}</h2>
-            <p class="text-secondary">{{ user.email }}</p>
-            <p class="text-secondary">{{ user.userprofile.city }}</p>
-            <p class="text-secondary">{{ user.userprofile.bio }}</p>
+{% block stylesheet_block %}
+<link rel="stylesheet" type="text/css" href="{% static 'social/profile.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'social/modal.css' %}">
+{% endblock stylesheet_block %}
+
+{% block js_block %}
+<script src="{% static 'social/scripts.js' %}"></script>
+<script>
+    $(document).ready(function () {
+        $(".edit-profile").modalForm({
+            formURL: "{% url 'edit-profile' user.pk %}"
+        });
+
+        $(".change-email").modalForm({
+            formURL: "{% url 'change-email' user.pk %}"
+        });
+    });
+</script>
+{% endblock js_block %}
+
+{% block content %}
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content my-modal-content">
+
         </div>
     </div>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Profile info</legend>
-            {{ user_form|crispy }}
-            {{ profile_form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Update</button>
-        </div>
-    </form>
 </div>
-{% endblock base_content %}
+
+<div class="col-sm-7">
+    <div>
+        <div class="media my-media">
+            <img class="profile-img" src="{{ user.userprofile.image.url }}">
+            <div class="one-above-the-other">
+                <div class="dropdown my-dropdown">
+                    <a class="link-hover" data-toggle="dropdown">
+                        <i class="fas fa-cog dark-icon"></i>
+                    </a>
+                    <div class="dropdown-menu my-drop-menu">
+                        <span class="my-drop-menu-item-span">
+                            <a class="my-drop-menu-item dropdown-item change-email link-hover"
+                                data-id="{% url 'change-email' user.pk %}">
+                                Change email
+                            </a>
+                        </span>
+                    </div>
+                </div>
+                <div class="edit-profile-button">
+                    <a class="edit-profile link-hover btn my-purple-btn">Edit profile</a>
+                </div>
+            </div>
+        </div>
+        <div class="media-body tests">
+            <h2 class="account-heading"> {{ user.username }}</h2>
+            <p class="text-secondary">{{ user.userprofile.bio|render_tags_and_links }}</p>
+            <div class="row">
+                <div class="col">
+                    <i class="fas fa-map-marker-alt icon-position"></i>
+                    <p class="text-secondary">{{ user.userprofile.city }}</p>
+                </div>
+                <div class="col">
+                    <i class="fas fa-link icon-position"></i>
+                    <p class="text-secondary">{{ user.userprofile.website|render_tags_and_links }}</p>
+                </div>
+                <div class="col">
+                    <div>
+                        <i class="fas fa-calendar-alt icon-position"></i>
+                        <p class="text-secondary ">{{ user.date_joined|date:"F Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

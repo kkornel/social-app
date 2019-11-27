@@ -30,9 +30,11 @@ urlpatterns = [
     # REST FRAMEWORK URLS
     path('api/users/', include('users.api.urls')),
     path('api/', include('social.api.urls')),
+
     # django.rest.auth
     path('rest-auth/', include('rest_auth.urls')),
 
+    # Users
     path('register/', users_views.register, name='register'),
     path('activate/<uidb64>/<token>/',
          users_views.activate_account, name='activate'),
@@ -73,12 +75,20 @@ urlpatterns = [
              template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
     path('profile/', users_views.userprofile, name='profile'),
-    path('edit-profile/', users_views.userprofile, name='edit_profile'),
 
     # Modals
-    path('update-profile/',
-         users_views.edit_userprofile,
-         name='update_profile'),
+    path('edit-profile/<int:pk>/change-email/',
+         users_views.MyUserEditViewModal.as_view(),
+         name='change-email'),
+    path('edit-profile/<int:pk>/',
+         users_views.UserProfileEditViewModal.as_view(),
+         name='edit-profile'),
+    # path('edit-profile/<int:pk>/',
+    #      users_views.MyUserEditViewModal.as_view(),
+    #      name='edit-profile'),
+    # path('edit-profile/',
+    #      users_views.edit_userprofile,
+    #      name='edit-profile'),
 
 ]
 

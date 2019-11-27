@@ -1,13 +1,11 @@
 import io
 import logging
 import os
-import uuid
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.files.storage import default_storage as storage
 from django.db import models
-from django.dispatch import receiver
 from django.utils import timezone
 from PIL import Image
 
@@ -15,6 +13,7 @@ from social_app.utils import get_file_path_folder
 
 logger = logging.getLogger(__name__)
 
+# Getting rid of annoying logs.
 logging.getLogger('boto3').setLevel(logging.CRITICAL)
 logging.getLogger('PIL').setLevel(logging.CRITICAL)
 logging.getLogger('botocore').setLevel(logging.CRITICAL)

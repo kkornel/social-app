@@ -14,6 +14,7 @@ textarea:focus {
 }
 
 input[type=text], input[type=text]:focus, 
+input[type=email], input[type=email]:focus, 
 input[type=file], input[type=file]:focus {
     background-color: #15181c;
     color: #d9d9d9;

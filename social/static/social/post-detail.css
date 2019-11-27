@@ -43,14 +43,6 @@ a.nav-back-span-a:hover {
     justify-content: space-around;
 }
 
-.dark-icon {
-    color:#2f3336;
-}
-
-.dark-icon:hover {
-    color: #a8a7a7;
-}
-
 .author-img-sm {
     height: 48px;
     width: 48px;

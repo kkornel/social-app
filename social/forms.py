@@ -64,10 +64,13 @@ class PostFormModal(BSModalForm):
         'style': 'resize:none; background-color: #15181c; color: #d9d9d9;',
         'placeholder': 'Text of your post',
     }))
-    # To remove 'Currently photo' and 'Clear' field, 
+    # To remove 'Currently photo' and 'Clear' field,
     # use this after required: widget=forms.FileInput
     image = forms.ImageField(
-        label='Photo', required=False, widget=forms.FileInput)
+        label='Change current image for new one:', required=False, widget=forms.FileInput)
+
+    delete_current_image = forms.BooleanField(label='or only delete current (checkbox):',
+                                              required=False)
 
     class Meta:
         model = Post

@@ -6,7 +6,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_file_path_folder(instance, folder_name, filename):
-    logger.debug('get_file_path_folder')
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join(folder_name, filename)
+    filepath = os.path.join(folder_name, filename)
+    logger.debug(f'get_file_path_folder: {filepath}')
+    return filepath

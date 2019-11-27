@@ -32,6 +32,17 @@ class PostEditViewModal(BSModalUpdateView):
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
 
+    def form_valid(self, form):
+        delete_current_image = form.cleaned_data['delete_current_image']
+        image = form.instance.image
+        if delete_current_image and not image:
+            logger.debug('Tried to delete image from post with no image.')
+        if delete_current_image and image:
+            logger.debug(f'Removing image: {image}...')
+            image.delete(save=False)
+            logger.debug(f'Image removed.')
+        return super().form_valid(form)
+
 
 class PostDeleteViewModal(BSModalDeleteView):
     model = Post
