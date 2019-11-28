@@ -82,6 +82,8 @@ urlpatterns = [
 
     path('profile/', users_views.userprofile, name='profile'),
 
+    path('test/<str:username>/',
+         users_views.UserProfileDetailListView.as_view(), name='test'),
 
     # Modals
     path('edit-profile/<int:pk>/change-email/',

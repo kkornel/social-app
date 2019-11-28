@@ -7,10 +7,13 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.files import File
 from django.core.files.storage import default_storage as storage
 from django.core.mail import send_mail
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views.generic import DetailView, ListView
+
+from social.models import Post
 
 from .admin import UserCreationForm
 from .decorators import check_recaptcha, func_log
@@ -21,6 +24,33 @@ from .models import MyUser, UserProfile
 from .tokens import account_activation_token
 
 logger = logging.getLogger(__name__)
+
+
+class UserProfileDetailListView(ListView):
+    """https://stackoverflow.com/questions/41287431/django-combine-detailview-and-listview"""
+    detail_context_object_name = 'userprofile'
+    model = Post
+    template_name = 'users/profile_test.html'
+    context_object_name = 'posts'
+    # paginate_by = 10
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(UserProfileDetailListView, self).get(request, *args, **kwargs)
+
+    def get_object(self):
+        username = self.kwargs.get('username')
+        user = MyUser.objects.get(username=username)
+        return get_object_or_404(UserProfile, user=user)
+
+    def get_queryset(self):
+        return Post.objects.filter(author=self.object).order_by('-date_posted')
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileDetailListView,
+                        self).get_context_data(**kwargs)
+        context[self.detail_context_object_name] = self.object
+        return context
 
 
 @func_log

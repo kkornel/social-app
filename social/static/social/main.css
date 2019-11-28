@@ -22,15 +22,21 @@ body {
 }
 
 .dark-icon {
-    color:#2f3336;
+    /* color:#2f3336; */
+    color:#6e767d;;
 }
 
 .dark-icon:hover {
-    color: #a8a7a7;
+    /* color: #a8a7a7; */
+    color: #d9d9d9;
 }
 
 .hashtag {
-  color: #3c2562;
+  color:#794bc4;
+}
+
+.hashtag:hover {
+  color: #794bc4;
 }
 
 .link {
@@ -38,7 +44,8 @@ body {
 }
 
 .link:hover {
-  color: #d313c9;
+  /* color: #d313c9; */
+  color:#794bc4;
 }
 
 .main-txt-col {
@@ -85,6 +92,20 @@ body {
     background-color: #000000; 
 }
 
+.main-text {
+  color: #d9d9d9;
+}
+
+.main-text-bold {
+
+  color: #d9d9d9;
+    font-weight: 700;
+}
+
+.secondary-text {
+    color: #6e767d;
+}
+
 .my-drop-menu-item:hover {
     background-color: #2f3336; 
     color: white;
@@ -119,7 +140,7 @@ body {
 }
 
 .my-sidebar {
-  background-color: #15181c;
+  /* background-color: #15181c; */
 }
 
 .content-section {
@@ -362,7 +383,8 @@ a.commented:hover {
 
 .my-purple-btn {
   color: #d9d9d9;
-  background-color: #3c2562;
+  /* background-color: #3c2562; */
+  background-color: #48277c;
   margin-right: 0px;
 }
 

@@ -61,9 +61,13 @@
                 <a class="post-author-name mr-2" href="{% url 'user-profile' post.author.user.username %}">
                     {{ post.author.user.username }}
                 </a>
+
+                {% if post.location %}
                 <a class="post-metadata-text mr-2" href="https://www.google.pl/maps/place/{{ post.location }}">
                     {{ post.location }}
                 </a>
+                {% endif %}
+
                 <span class="post-metadata-text">
                     {{ post.date_posted|time_since_date_posted }}
                 </span>

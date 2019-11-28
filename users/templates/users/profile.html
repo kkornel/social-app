@@ -57,20 +57,20 @@
         </div>
         <div class="media-body tests">
             <h2 class="account-heading"> {{ user.username }}</h2>
-            <p class="text-secondary">{{ user.userprofile.bio|render_tags_and_links }}</p>
+            <p class="secondary-text">{{ user.userprofile.bio|render_tags_and_links }}</p>
             <div class="row">
                 <div class="col">
                     <i class="fas fa-map-marker-alt icon-position"></i>
-                    <p class="text-secondary">{{ user.userprofile.city }}</p>
+                    <p class="secondary-text">{{ user.userprofile.city }}</p>
                 </div>
                 <div class="col">
                     <i class="fas fa-link icon-position"></i>
-                    <p class="text-secondary">{{ user.userprofile.website|render_tags_and_links }}</p>
+                    <p class="secondary-text">{{ user.userprofile.website|render_tags_and_links }}</p>
                 </div>
                 <div class="col">
                     <div>
                         <i class="fas fa-calendar-alt icon-position"></i>
-                        <p class="text-secondary ">{{ user.date_joined|date:"F Y" }}</p>
+                        <p class="secondary-text">{{ user.date_joined|date:"F Y" }}</p>
                     </div>
                 </div>
             </div>
