@@ -30,8 +30,8 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn purple-btn-light">Update</button>
+        <a class="btn btn-outline-secondary mr-2" href="{% url 'post-detail' post.id %}">Cancel</a>
+        <button class="btn purple-btn-outline" type="submit">Update</button>
     </div>
 
 </form>

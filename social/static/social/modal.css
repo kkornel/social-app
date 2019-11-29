@@ -1,4 +1,8 @@
 .my-modal-content {
-    background-color:#15181c;
     color: #d9d9d9;
+    background-color:#15181c;
+}
+
+.purple-btn-outline {
+    background-color:#15181c;
 }
