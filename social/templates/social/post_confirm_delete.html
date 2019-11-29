@@ -1,17 +1,17 @@
-{% extends 'social/base.html' %}
+{% extends 'social/base_sidebar.html' %}
 
-{% block base_content %}
-<div class="content-section">
+{% block content %}
+<div class="col-md-7 main-column">
     <form method="POST">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Delete Post</legend>
             <h2>Are you sure you want to delete the post "{{ post.content }}"?</h2>
         </fieldset>
-        <div class="form-group">
+        <div class="form-group align-right">
+            <a class="btn btn-outline-secondary mr-2" href="{% url 'post-detail' post.id %}">Cancel</a>
             <button class="btn btn-outline-danger" type="submit">Delete</button>
-            <a class="btn btn-outline-secondary" href="{% url 'post-detail' post.id %}">Cancel</a>
         </div>
     </form>
 </div>
-{% endblock base_content %}
+{% endblock content %}

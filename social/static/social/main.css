@@ -487,25 +487,36 @@ a.commented:hover {
   text-shadow: 0 0 5px #0077ff; */
 }
 
-.my-purple-btn {
+.purple-btn {
   color: #d9d9d9;
   /* background-color: #3c2562; */
   background-color: #48277c;
   margin-right: 0px;
 }
 
-.my-purple-btn:hover {
+.purple-btn:hover {
   color: #ffffff;
   background-color: #794bc4;
 }
 
-.my-purple-btn-light {
+.purple-btn-light {
   background-color: #794bc4;
   color: #ffffff;
 
 }
 
-.my-purple-btn-light:hover {
+.purple-btn-light:hover {
+  background-color: #865dca;
+  color: #ffffff;
+}
+
+.purple-btn-outline {
+  border: 1px solid #865dca;
+  background-color: #000000;
+  color: #865dca;
+}
+
+.purple-btn-outline:hover {
   background-color: #865dca;
   color: #ffffff;
 }

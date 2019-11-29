@@ -22,7 +22,8 @@
 
         </fieldset>
         <div class="form-group align-right">
-            <button class="btn my-purple-btn" type="submit">Update</button>
+            <a class="btn btn-outline-secondary mr-2" href="{% url 'post-detail' post.id %}">Cancel</a>
+            <button class="btn purple-btn-outline" type="submit">Update</button>
         </div>
     </form>
 </div>
