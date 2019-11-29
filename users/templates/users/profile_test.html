@@ -46,7 +46,7 @@
     </div>
 </div>
 
-<div class="col-sm-7 main-colum pt-0 pl-0 pr-0">
+<div class="col-sm-7 main-column pt-0 pl-0 pr-0">
     <div class="nav-back">
         <span class="nav-back-span-icon">
             <!-- <a href="javascript:history.back()" class="nav-back-span-a"> -->
@@ -111,11 +111,13 @@
                     </div>
                 </div>
             </div>
+            <!-- <p class="mb-1">{{ userprofile.bio|render_tags|urlize }}</p> -->
             <p class="mb-1">{{ userprofile.bio|render_tags_and_links }}</p>
+            <!-- <p class="mb-1">{{ userprofile.bio|render_links|render_tags }}</p> -->
 
             <div class="row content-between mr-0 ml-0 mb-0 mt-2">
                 {% if userprofile.city %}
-                <div class="row ml-0 secondary-text">
+                <div class="row secondary-text ml-0 ">
                     <i class="fas fa-map-marker-alt icon-position"></i>
                     <a class="no-decoration mb-0" href="https://www.google.pl/maps/place/{{ userprofile.city }}"
                         target="blank">
@@ -123,9 +125,12 @@
                     </a>
                     <!-- <p class="mb-0">{{ userprofile.city }}</p> -->
                 </div>
+                {% else %}
+                <div></div>
+                <div></div>
                 {% endif %}
                 {% if userprofile.website %}
-                <div class="row secondary-text">
+                <div class="row secondary-text ml-0">
                     <i class="fas fa-link icon-position"></i>
                     <p class="mb-0">
                         <a class="link" href="{{ userprofile.website }}">
@@ -133,8 +138,10 @@
                         </a>
                     </p>
                 </div>
+                {% else %}
+                <div></div>
                 {% endif %}
-                <div class="row secondary-text mr-0">
+                <div class="row secondary-text mr-0 ml-0">
                     <i class="fas fa-calendar-alt icon-position"></i>
                     <p class="mb-0">Joined {{ userprofile.user.date_joined|date:"F Y" }}</p>
                 </div>
@@ -234,9 +241,9 @@
     <!-- </div> -->
     <div class="my-horizontal-bar"></div>
     {% empty %}
-    <p class="comment-content">
-        No comments here
-    </p>
+    <div class="content-center" style="margin-top: 32px;">
+        <p>User has no posts.</p>
+    </div>
     {% endfor %}
 </div>
 

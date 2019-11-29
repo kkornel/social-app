@@ -28,40 +28,5 @@
     top: 0;
 }
 
-.content-between{
-    display:flex;
-    justify-content:space-between;
-}
 
-.content-evenly{
-    display:flex;
-    justify-content:space-evenly;
-}
-
-.no-decoration {
-  color: unset; 
-  text-decoration: inherit;
-}
-.no-decoration:hover {
-  color: unset;
-  text-decoration-color: #d9d9d9;
-  text-decoration-style: solid;
-  text-decoration: underline;
-}
-
-.content-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.main-colum {
-    border-left-color: #2f3336;
-    border-left-style: solid;
-    border-left-width: 1px;
-
-    border-right-color: #2f3336;
-    border-right-style: solid;
-    border-right-width: 1px;
-}
 

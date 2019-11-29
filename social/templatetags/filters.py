@@ -27,13 +27,41 @@ register = template.Library()
 
 
 def generate_link(link):
-    return '<a class="link" href="{}">{}</a>'.format(link, link)
+    htpplink = link
+    if not link.startswith('http'):
+        htpplink = 'http://' + link
+    return f'<a class="link" target="_blank" href="{htpplink}">{link}</a>'
 
 
 def generate_hashtag_link(tag):
     # Free to configuree the URL the way adapted your project
     url = "/tags/{}/".format(tag)
-    return '<a class="hashtag" href="{}">#{}</a>'.format(url, tag)
+    return f'<a class="hashtag" href="{url}">#{tag}</a>'
+
+
+@register.filter
+def render_tags(obj):
+    text = re.sub(r"#(\w+)", lambda m: generate_hashtag_link(m.group(1)), obj)
+    # If you want Django to mark it as safe content, you can do the following:
+    return mark_safe(text)
+
+
+@register.filter
+def render_links(obj):
+    logger.debug(obj)
+    text = mark_safe(re.sub(r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*",
+                            lambda m: generate_link(m.group(0)), obj))
+    return mark_safe(text)
+
+
+@register.filter
+def render_tags_and_links(obj):
+    text = re.sub(r"#(\w+)", lambda m: generate_hashtag_link(m.group(1)), obj)
+    # return re.sub(r"(?P<url>https?://[^\s]+)", lambda m: generate_link(m.group(1)), text)
+
+    # If you want Django to mark it as safe content, you can do the following:
+    return mark_safe(re.sub(r"((http|https)\:\/\/)?[a-zA-Z0-9\.\/\?\:@\-_=#]+\.([a-zA-Z]){2,6}([a-zA-Z0-9\.\&\/\?\:@\-_=#])*",
+                            lambda m: generate_link(m.group(0)), text))
 
 
 @register.simple_tag
@@ -46,16 +74,6 @@ def has_user_commented(userId, postId):
         return has_commented
     except Exception:
         return False
-
-
-@register.filter
-def render_tags_and_links(obj):
-    text = re.sub(r"#(\w+)", lambda m: generate_hashtag_link(m.group(1)), obj)
-    # return re.sub(r"(?P<url>https?://[^\s]+)", lambda m: generate_link(m.group(1)), text)
-
-    # If you want Django to mark it as safe content, you can do the following:
-    return mark_safe(re.sub(r"(https?://[^\s]+)",
-                            lambda m: generate_link(m.group(1)), text))
 
 
 @register.filter
