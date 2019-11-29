@@ -133,9 +133,7 @@
                 <div class="row secondary-text ml-0">
                     <i class="fas fa-link icon-position"></i>
                     <p class="mb-0">
-                        <a class="link" href="{{ userprofile.website }}">
-                            {{ userprofile.website }}
-                        </a>
+                        {{ userprofile.website|render_links }}
                     </p>
                 </div>
                 {% else %}
