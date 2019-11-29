@@ -19,8 +19,6 @@
         $(".change-email").modalForm({
             formURL: "{% url 'change-email' user.pk %}"
         });
-
-
     });
 
     $(function () {
@@ -49,7 +47,7 @@
 </div>
 
 <div class="col-sm-7 main-colum pt-0 pl-0 pr-0">
-    <div class="nav-back-from-post">
+    <div class="nav-back">
         <span class="nav-back-span-icon">
             <!-- <a href="javascript:history.back()" class="nav-back-span-a"> -->
             <a href="{{ request.META.HTTP_REFERER }}" class="nav-back-span-a">
@@ -93,7 +91,7 @@
                 <div class="col-10 content-center">
                     <div class="mr-0 ml-0 row content-evenly" style="width: 100%;">
                         <div>
-                            <a href="#" class="no-decoration">
+                            <a href="#posts" class="no-decoration">
                                 <span class="main-text-bold">19.9K</span>
                                 <span class="secondary-text"><small> posts</small></span>
                             </a>
@@ -145,6 +143,7 @@
     </div>
 
     <div class="my-horizontal-bar"></div>
+    <div id="posts"></div>
     {% for post in posts %}
     <!-- <div onclick="location.href='/post/{{ post.id }}/';" style="cursor: pointer; "
             onmouseover="this.getElementsByClassName('my-post')[0].style.backgroundColor = '#15181c';"
