@@ -19,7 +19,7 @@
         {% for field in form %}
         <div class="form-group">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {% render_field field class="form-control" placeholder=field.label %}
+            {% render_field field class="form-control" %}
             <div class="{% if field.errors %} invalid{% endif %}">
                 {% for error in field.errors %}
                 <p class="help-block">{{ error }}</p>
@@ -33,5 +33,4 @@
         <a class="btn btn-outline-secondary mr-2" href="{% url 'post-detail' post.id %}">Cancel</a>
         <button class="btn purple-btn-outline" type="submit">Update</button>
     </div>
-
 </form>

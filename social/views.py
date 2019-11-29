@@ -5,10 +5,8 @@ from bootstrap_modal_forms.generic import (BSModalCreateView,
                                            BSModalUpdateView)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import (HttpResponse, HttpResponseForbidden,
-                         HttpResponseRedirect)
-from django.shortcuts import get_object_or_404, redirect, render, reverse
-from django.urls import reverse_lazy
+from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, render, reverse
 from django.views import View, generic
 from django.views.generic import (
     CreateView, DeleteView, DetailView, FormView, ListView, UpdateView)
@@ -17,16 +15,75 @@ from django.views.generic.edit import FormMixin
 
 from users.models import MyUser, UserProfile
 
-from .forms import CommentForm, CommentFormModal, PostForm, PostFormModal
+from .forms import (CommentCreateForm, CommentCreateFormModal, PostCreateForm,
+                    PostCreateFormModal, PostUpdateForm, PostUpdateFormModal)
 from .models import Comment, Like, Post
 
 logger = logging.getLogger(__name__)
 
 
-class PostEditViewModal(BSModalUpdateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
-    template_name = 'social/post_form_modal.html'
-    form_class = PostFormModal
+    # Specifying both 'fields' and 'form_class' is not permitted.
+    form_class = PostCreateForm
+    # Either form_class or fields.
+    # fields = ['content', 'location', 'image']
+    # We do not have to specify template_name, because Django uses post_form.html,
+    # for both: CreateView and UpdateView. No need to create seperate.
+    template_name = 'social/post_create.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user.userprofile
+        return super().form_valid(form)
+
+
+class PostCreateViewModal(BSModalCreateView):
+    template_name = 'social/post_create_modal.html'
+    form_class = PostCreateFormModal
+    success_message = ''
+
+    def get_success_url(self):
+        return reverse('post-detail', args=(self.object.id,))
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user.userprofile
+        return super().form_valid(form)
+
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    # Specifying both 'fields' and 'form_class' is not permitted.
+    form_class = PostUpdateForm
+    # Either form_class or fields
+    # fields = ['content', 'location', 'image']
+    template_name = 'social/post_update.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user.userprofile
+        delete_current_image = form.cleaned_data['delete_current_image']
+        image = form.instance.image
+        if delete_current_image and not image:
+            logger.debug('Tried to delete image from post with no image.')
+        if delete_current_image and image:
+            logger.debug(f'Removing image: {image}...')
+            image.delete(save=False)
+            logger.debug(f'Image removed.')
+        return super().form_valid(form)
+
+    def test_func(self):
+        """
+        This function is run by UserPassesTestMixin to check something that we want to check.
+        In this case we want to check if the currently logged in user is also the author of the post.
+        If he is not, then he has no permissions to do that.
+        """
+        post = self.get_object()
+        return self.request.user.userprofile == post.author
+
+
+class PostUpdateViewModal(BSModalUpdateView):
+    model = Post
+    template_name = 'social/post_update_modal.html'
+    form_class = PostUpdateFormModal
     success_message = ''
 
     def get_success_url(self):
@@ -44,23 +101,81 @@ class PostEditViewModal(BSModalUpdateView):
         return super().form_valid(form)
 
 
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    context_object_name = 'post'
+    success_url = '/'  # Where to go after deleting.
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user.userprofile == post.author
+
+
 class PostDeleteViewModal(BSModalDeleteView):
     model = Post
-    template_name = 'social/delete_post_modal.html'
+    template_name = 'social/post_confirm_delete_modal.html'
     success_message = 'Post deleted'
-    # success_message = 'Success: Comment deleted.'
     success_url = '/'
 
-    # def get_success_url(self):
-    #     return self.request.META.get('HTTP_REFERER')
+
+class PostDetail(View):
+    """https://docs.djangoproject.com/en/2.2/topics/class-based-views/mixins/#using-formmixin-with-detailview"""
+
+    def get(self, request, *args, **kwargs):
+        view = PostDetailView.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = CommentCreateView.as_view()
+        return view(request, *args, **kwargs)
+
+
+class PostDetailView(DetailView):
+    model = Post
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentCreateForm()
+        return context
+
+
+class PostListView(ListView):
+    model = Post
+    # If not specified, Django looks for template in following path: '<app>/<model>_<viewtype>.html'
+    template_name = 'social/home.html'
+    # If not specified, Django uses name 'object' for data passed to template file.
+    context_object_name = 'posts'
+    ordering = ['-date_posted']
+    # paginate_by = 5
+
+
+class CommentCreateView(LoginRequiredMixin, SingleObjectMixin, FormView):
+    model = Post
+    form_class = CommentCreateForm
+    template_name = 'social/post_detail.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user.userprofile
+        form.instance.post = self.object
+        form.save()
+        return super().form_valid(form)
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.object.pk})
 
 
 class CommentCreateViewModal(BSModalCreateView):
     model = Post
-    template_name = 'social/comment_form_modal.html'
-    form_class = CommentFormModal
+    template_name = 'social/comment_create_modal.html'
+    form_class = CommentCreateFormModal
     success_message = ''
-    # success_message = 'Success: Commented.'
 
     def form_valid(self, form):
         # Here, unlike the solution in CommentCreateView, we have to query
@@ -83,10 +198,8 @@ class CommentCreateViewModal(BSModalCreateView):
 
 class CommentDeleteViewModal(BSModalDeleteView):
     model = Comment
-    template_name = 'social/delete_comment_modal.html'
+    template_name = 'social/comment_confirm_delete_modal.html'
     success_message = None
-    # success_message = 'Success: Comment deleted.'
-    # success_url = reverse_lazy('post-detail')
 
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
@@ -112,49 +225,16 @@ def like_post(request):
     return HttpResponse(response)
 
 
-class PostDetailView(DetailView):
-    model = Post
-    context_object_name = 'post'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = CommentForm()
-        return context
-
-
-class CommentCreateView(LoginRequiredMixin, SingleObjectMixin, FormView):
-    model = Post
-    form_class = CommentForm
-    template_name = 'social/post_detail.html'
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user.userprofile
-        form.instance.post = self.object
-        form.save()
-        return super().form_valid(form)
-
-    def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return HttpResponseForbidden()
-        self.object = self.get_object()
-        return super().post(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse('post-detail', kwargs={'pk': self.object.pk})
+@login_required
+def home(request):
+    posts = Post.objects.all()
+    context = {
+        'posts': posts,
+    }
+    return render(request, 'social/home.html', context)
 
 
-class PostDetail(View):
-    """https://docs.djangoproject.com/en/2.2/topics/class-based-views/mixins/#using-formmixin-with-detailview"""
-
-    def get(self, request, *args, **kwargs):
-        view = PostDetailView.as_view()
-        return view(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        view = CommentCreateView.as_view()
-        return view(request, *args, **kwargs)
-
-
+# TODO Propably to delete, just check with API
 class UserProfileView(ListView):
     model = Post
     template_name = 'social/user_profile.html'
@@ -165,76 +245,3 @@ class UserProfileView(ListView):
         user = MyUser.objects.get(username=self.kwargs.get('username'))
         userprofile = get_object_or_404(UserProfile, user=user)
         return Post.objects.filter(author=userprofile).order_by('-date_posted')
-
-
-class PostListView(ListView):
-    model = Post
-    # If not specified, Django looks for template in following path: '<app>/<model>_<viewtype>.html'
-    template_name = 'social/home.html'
-    # If not specified, Django uses name 'object' for data passed to template file.
-    context_object_name = 'posts'
-    ordering = ['-date_posted']
-    # paginate_by = 5
-
-
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    # Specifying both 'fields' and 'form_class' is not permitted.
-    form_class = PostForm
-    # Either form_class or fields.
-    # fields = ['content', 'location', 'image']
-    # We do not have to specify template_name, because Django uses post_form.html,
-    # for both: CreateView and UpdateView. No need to create seperate.
-    # template_name = 'social/post_form.html'
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user.userprofile
-        return super().form_valid(form)
-
-
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Post
-    # Specifying both 'fields' and 'form_class' is not permitted.
-    form_class = PostForm
-    # Either form_class or fields
-    # fields = ['content', 'location', 'image']
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user.userprofile
-        delete_current_image = form.cleaned_data['delete_current_image']
-        image = form.instance.image
-        if delete_current_image and not image:
-            logger.debug('Tried to delete image from post with no image.')
-        if delete_current_image and image:
-            logger.debug(f'Removing image: {image}...')
-            image.delete(save=False)
-            logger.debug(f'Image removed.')
-        return super().form_valid(form)
-
-    def test_func(self):
-        """
-        This function is run by UserPassesTestMixin to check something that we want to check.
-        In this case we want to check if the currently logged in user is also the author of the post.
-        If he is not, then he has no permissions to do that.
-        """
-        post = self.get_object()
-        return self.request.user.userprofile == post.author
-
-
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Post
-    context_object_name = 'post'
-    success_url = '/'  # Where to go after deleting.
-
-    def test_func(self):
-        post = self.get_object()
-        return self.request.user.userprofile == post.author
-
-
-@login_required
-def home(request):
-    posts = Post.objects.all()
-    context = {
-        'posts': posts,
-    }
-    return render(request, 'social/home.html', context)

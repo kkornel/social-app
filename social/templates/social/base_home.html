@@ -16,6 +16,7 @@
     <!--load all styles -->
 
     <link rel="stylesheet" type="text/css" href="{% static 'social/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'social/modal.css' %}">
     <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
 
     <title>
@@ -50,6 +51,7 @@
                     </div>
                     <div class="navbar-nav">
                         {% if user.is_authenticated %}
+                        <a class="create-post link-hover nav-item nav-link">New post modal</a>
                         <a class="nav-item nav-link" href="{% url 'post-create' %}">New post</a>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -73,10 +75,17 @@
         </nav>
     </header>
 
-
     <!-- ANCHOR Borders  -->
     <!-- <div class="container my-container brd-container"> -->
     <div class="container my-container">
+
+        <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content my-modal-content">
+
+                </div>
+            </div>
+        </div>
 
         {% if messages %}
         {% for message in messages %}
@@ -108,11 +117,6 @@
         </div>
     </div>
 
-
-
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -126,6 +130,15 @@
         crossorigin="anonymous"></script>
 
     <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $(".create-post").modalForm({
+                formURL: "{% url 'post-create-modal' %}"
+            });
+        });
+    </script>
 
     {% block js_block %}
     {% endblock js_block %}
