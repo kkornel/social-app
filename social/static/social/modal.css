@@ -2,21 +2,3 @@
     background-color:#15181c;
     color: #d9d9d9;
 }
-
-textarea {
-    width: 100%;
-    background-color: #15181c;
-    color: #d9d9d9;
-}
-
-textarea:focus {
-  border: 1px solid #3c2562;
-}
-
-input[type=text], input[type=text]:focus, 
-input[type=email], input[type=email]:focus, 
-input[type=file], input[type=file]:focus {
-    background-color: #15181c;
-    color: #d9d9d9;
-    color: #ffffff
-}

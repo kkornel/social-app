@@ -201,6 +201,14 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user.userprofile
+        delete_current_image = form.cleaned_data['delete_current_image']
+        image = form.instance.image
+        if delete_current_image and not image:
+            logger.debug('Tried to delete image from post with no image.')
+        if delete_current_image and image:
+            logger.debug(f'Removing image: {image}...')
+            image.delete(save=False)
+            logger.debug(f'Image removed.')
         return super().form_valid(form)
 
     def test_func(self):

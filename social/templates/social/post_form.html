@@ -1,17 +1,29 @@
-{% extends 'social/base.html' %}
+{% extends 'social/base_sidebar.html' %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
 
-{% block base_content %}
-<div class="col-md-8">
+{% block content %}
+<div class="col-md-7 main-column">
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Profile info</legend>
-            {{ form|crispy }}
+        <fieldset class="mb-0">
+            <legend class="border-bottom mb-2">Edit post</legend>
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% render_field field class="form-control" placeholder=field.label %}
+                <div class="{% if field.errors %} invalid{% endif %}">
+                    {% for error in field.errors %}
+                    <p class="help-block">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
         </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Update</button>
+        <div class="form-group align-right">
+            <button class="btn my-purple-btn" type="submit">Update</button>
         </div>
     </form>
 </div>
-{% endblock base_content %}
+{% endblock content %}
