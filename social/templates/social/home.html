@@ -53,12 +53,12 @@
         onmouseover="this.getElementsByClassName('my-post')[0].style.backgroundColor = '#15181c';"
         onmouseout=" this.getElementsByClassName('my-post')[0].style.backgroundColor='black';"> -->
     <article class="media my-post">
-        <a href=" {% url 'user-profile' post.author.user.username %}">
+        <a href=" {% url 'profile' post.author.user.username %}">
             <img class="rounded-circle post-author-img" src="{{ post.author.image.url }}">
         </a>
         <div class="media-body">
             <div class="post-metadata">
-                <a class="post-author-name mr-2" href="{% url 'user-profile' post.author.user.username %}">
+                <a class="post-author-name mr-2" href="{% url 'profile' post.author.user.username %}">
                     {{ post.author.user.username }}
                 </a>
 

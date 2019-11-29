@@ -30,7 +30,7 @@ class UserProfileDetailListView(ListView):
     """https://stackoverflow.com/questions/41287431/django-combine-detailview-and-listview"""
     detail_context_object_name = 'userprofile'
     model = Post
-    template_name = 'users/profile_test.html'
+    template_name = 'users/profile.html'
     context_object_name = 'posts'
     # paginate_by = 10
 
@@ -204,10 +204,10 @@ class MyUserEditViewModal(BSModalUpdateView):
     form_class = MyUserUpdateFormModal
     success_message = 'Email successfully changed.'
     #  TODO test for succes_url or get_success_url after displaying all user profiles
-    success_url = '/profile'
+    # success_url = '/profile'
 
-    # def get_success_url(self):
-    # return self.request.META.get('HTTP_REFERER')
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
 
 
 class UserProfileEditViewModal(BSModalUpdateView):
@@ -216,10 +216,10 @@ class UserProfileEditViewModal(BSModalUpdateView):
     form_class = UserProfileUpdateFormModal
     success_message = 'Profile successfully updated.'
     #  TODO test for succes_url or get_success_url after displaying all user profiles
-    success_url = '/profile'
+    # success_url = '/profile'
 
-    # def get_success_url(self):
-    #     return self.request.META.get('HTTP_REFERER')
+    def get_success_url(self):
+        return self.request.META.get('HTTP_REFERER')
 
     def form_valid(self, form):
         logger.debug('form_valid')
