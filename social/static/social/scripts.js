@@ -1,4 +1,4 @@
-function send_like(postPk, userPk, postId, csrf) {
+function send_like(event, postPk, userPk, postId, csrf) {
     const aHrefLike = $('#' + postId);
     const isLiked = aHrefLike.hasClass('liked');
     const smallTextLikesCount = $('#' + postId).find("#post-likes-count");
@@ -20,4 +20,11 @@ function send_like(postPk, userPk, postId, csrf) {
             console.log(data);
         },
     });
+    event.stopImmediatePropagation();
+}
+
+function openInNewTab(event, url) {
+    var win = window.open(url, '_blank');
+    win.focus();
+    event.stopImmediatePropagation();
 }
