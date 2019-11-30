@@ -1,6 +1,8 @@
 import logging
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.signals import user_logged_out
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
@@ -35,3 +37,8 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
     logger.debug(f'created: {created}')
     if created:
         Token.objects.create(user=instance)
+
+
+@receiver(user_logged_out)
+def on_user_logged_out(sender, request, **kwargs):
+    messages.add_message(request, messages.INFO, 'You have been logged out.')

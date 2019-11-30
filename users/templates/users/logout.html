@@ -1,10 +1,10 @@
 {% extends 'social/base.html' %}
 
 {% block base_content %}
-<h2>You have been logged out</h2>
-<div class="border-top pt-3">
-    <small class="text-muted">
-        <a href="{% url 'login' %}">Log In Again</a>
-    </small>
+<div class="col-sm-6 offset-sm-3 text-center mt-2">
+    <div class="border-top pt-1"></div>
+</div>
+<div class="col-sm-4 offset-sm-4 text-center mt-2">
+    <a class="btn purple-btn" href="{% url 'login' %}">Back To Login</a>
 </div>
 {% endblock base_content %}

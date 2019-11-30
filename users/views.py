@@ -3,6 +3,7 @@ import logging
 from bootstrap_modal_forms.generic import BSModalUpdateView
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LogoutView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.files import File
 from django.core.files.storage import default_storage as storage
@@ -293,3 +294,13 @@ def edit_userprofile(request):
     }
 
     return render(request, 'users/profile_edit_modal.html', context)
+
+
+class CustomLogoutView(LogoutView):
+    def get_next_page(self):
+        next_page = super(LogoutView, self).get_next_page()
+        messages.add_message(
+            self.request, messages.SUCCESS,
+            'You have been logged out'
+        )
+        return next_page

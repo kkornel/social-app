@@ -49,6 +49,7 @@ textarea[name=content]:focus {
 input[type=text], 
 input[type=email],
 input[type=checkbox],
+input[type=password],
 input[type=file] {
   color: #d9d9d9;
   border-color: #2f3336;
@@ -58,6 +59,7 @@ input[type=file] {
 input[type=text]:focus, 
 input[type=email]:focus, 
 input[type=checkbox]:focus, 
+input[type=password]:focus, 
 input[type=file]:focus {
   color: #d9d9d9;
   border-color: #3c2562;
@@ -83,6 +85,24 @@ input[type=file]:focus {
 
 .purple-sec {
   color: #3c2562;
+}
+
+.borders {
+    border-left-color: #2f3336;
+    border-left-style: solid;
+    border-left-width: 1px;
+
+    border-right-color: #2f3336;
+    border-right-style: solid;
+    border-right-width: 1px;
+
+    border-bottom-color: #2f3336;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+
+    border-top-color: #2f3336;
+    border-top-style: solid;
+    border-top-width: 1px;
 }
 
 .dark-icon {

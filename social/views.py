@@ -114,7 +114,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 class PostDeleteViewModal(BSModalDeleteView):
     model = Post
     template_name = 'social/post_confirm_delete_modal.html'
-    success_message = 'Post deleted'
+    success_message = ''
     success_url = '/'
 
 
@@ -199,7 +199,7 @@ class CommentCreateViewModal(BSModalCreateView):
 class CommentDeleteViewModal(BSModalDeleteView):
     model = Comment
     template_name = 'social/comment_confirm_delete_modal.html'
-    success_message = None
+    success_message = ''
 
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
