@@ -131,9 +131,8 @@
                 <div class="justify-div">
                     <div>
                         {% has_user_commented user.pk post.pk as has_commented %}
-                        <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#comments"
+                        <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#id_text"
                             class="col-sec mr-2 post-detail-likes-panel {% if has_commented %}commented{% else %}comment{% endif %}"
-                            onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
                             onmouseover="$('#' + this.id).addClass('hvr-icon-wobble-horizontal');"
                             onmouseout="$('#' + this.id).removeClass('hvr-icon-wobble-horizontal');">
                             <i class="far fa-comment hvr-icon"></i>

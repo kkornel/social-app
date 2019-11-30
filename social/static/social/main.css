@@ -208,7 +208,18 @@ a:hover {
   color: #865dca;
 }
 
+.purple-btn-outline-modal {
+  border: 1px solid #865dca;
+  background-color:#15181c;
+  color: #865dca;
+}
+
 .purple-btn-outline:hover {
+  background-color: #865dca;
+  color: #ffffff;
+}
+
+.purple-btn-outline-modal:hover {
   background-color: #865dca;
   color: #ffffff;
 }

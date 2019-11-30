@@ -1,47 +1,10 @@
 {% extends 'social/base_sidebar.html' %}
+{% load static %}
 {% load filters %}
 
 {% block js_block %}
-<script>
-    function send_like(postId, userId, id) {
-        const aHrefLike = $('#' + id);
-        const isLiked = aHrefLike.hasClass('liked');
-        const smallTextLikesCount = $('#' + id).find("#post-likes-count");
-        const likesCountText = smallTextLikesCount.text();
-        let likesCount = parseInt(likesCountText);
+<script src="{% static 'social/scripts.js' %}"></script>
 
-        console.log(postId);
-        console.log(userId);
-        console.log(id);
-
-        if (isLiked) {
-            likesCount -= 1;
-        } else {
-            likesCount += 1;
-        }
-        smallTextLikesCount.text(likesCount);
-
-        aHrefLike.toggleClass("liked");
-        aHrefLike.toggleClass("heart");
-
-        $.ajax({
-            url: 'like/',
-            type: 'POST',
-            data: {
-                'postId': postId,
-                'userId': userId,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-            },
-            success: function (data) {
-                console.log('Liked!');
-                console.log(data);
-            },
-            error: function (data) {
-                console.log(data);
-            },
-        });
-    }
-</script>
 {% endblock js_block %}
 
 {% block content %}
@@ -86,9 +49,8 @@
                     <div class="row">
                         <div>
                             {% has_user_commented user.pk post.pk as has_commented %}
-                            <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#comments"
+                            <a id="post-comment-{{post.id}}" href="{% url 'post-detail' post.pk %}#id_text"
                                 class="col-sec mr-2 {% if has_commented %}commented{% else %}comment{% endif %}"
-                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
                                 onmouseover="$('#' + this.id).addClass('hvr-icon-wobble-horizontal');"
                                 onmouseout="$('#' + this.id).removeClass('hvr-icon-wobble-horizontal');">
                                 <i class="far fa-comment hvr-icon"></i>
@@ -98,7 +60,7 @@
                         <div>
                             <a id="post-like-{{post.id}}" href="javascript:void(0);"
                                 class="{% if user.userprofile in post.likes.all %}liked{% else %}heart{% endif %}"
-                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id);"
+                                onclick="send_like('{{post.pk}}', '{{user.pk}}', this.id, '{{ csrf_token }}');"
                                 onmouseover="$('#' + this.id).addClass('hvr-icon-pulse-shrink');"
                                 onmouseout="$('#' + this.id).removeClass('hvr-icon-pulse-shrink');">
                                 <i class="far fa-heart hvr-icon"></i>
