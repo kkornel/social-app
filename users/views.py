@@ -3,7 +3,6 @@ import logging
 from bootstrap_modal_forms.generic import BSModalUpdateView
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LogoutView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.files import File
 from django.core.files.storage import default_storage as storage
@@ -25,33 +24,6 @@ from .models import MyUser, UserProfile
 from .tokens import account_activation_token
 
 logger = logging.getLogger(__name__)
-
-
-class UserProfileDetailListView(ListView):
-    """https://stackoverflow.com/questions/41287431/django-combine-detailview-and-listview"""
-    detail_context_object_name = 'userprofile'
-    model = Post
-    template_name = 'users/profile.html'
-    context_object_name = 'posts'
-    # paginate_by = 10
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super(UserProfileDetailListView, self).get(request, *args, **kwargs)
-
-    def get_object(self):
-        username = self.kwargs.get('username')
-        user = MyUser.objects.get(username=username)
-        return get_object_or_404(UserProfile, user=user)
-
-    def get_queryset(self):
-        return Post.objects.filter(author=self.object).order_by('-date_posted')
-
-    def get_context_data(self, **kwargs):
-        context = super(UserProfileDetailListView,
-                        self).get_context_data(**kwargs)
-        context[self.detail_context_object_name] = self.object
-        return context
 
 
 @func_log
@@ -171,58 +143,58 @@ def reset_password(request):
     return render(request, 'users/password_reset.html', {'form': form})
 
 
-#  TODO replace with CBV detail + listview
-@login_required
-def userprofile(request):
-    if request.method == "POST":
-        myuser_form = MyUserUpdateForm(request.POST,
-                                       instance=request.user)
-        profile_form = UserProfileUpdateForm(request.POST,
-                                             request.FILES,
-                                             instance=request.user.userprofile)
+class UserProfileDetailListView(ListView):
+    """https://stackoverflow.com/questions/41287431/django-combine-detailview-and-listview"""
+    detail_context_object_name = 'userprofile'
+    model = Post
+    template_name = 'users/profile.html'
+    context_object_name = 'posts'
+    # paginate_by = 10
 
-        if myuser_form.is_valid() and profile_form.is_valid():
-            myuser_form.save()
-            profile_form.save()
-            messages.success(request, f'Your account has been updated!')
-            return redirect('profile')
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(UserProfileDetailListView, self).get(request, *args, **kwargs)
 
-    else:
-        myuser_form = MyUserUpdateForm(instance=request.user)
-        profile_form = UserProfileUpdateForm(instance=request.user.userprofile)
+    def get_object(self):
+        username = self.kwargs.get('username')
+        user = MyUser.objects.get(username=username)
+        return get_object_or_404(UserProfile, user=user)
 
-    context = {
-        'myuser_form': myuser_form,
-        'profile_form': profile_form,
-    }
+    def get_queryset(self):
+        return Post.objects.filter(author=self.object).order_by('-date_posted')
 
-    return render(request, 'users/profile.html', context)
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileDetailListView,
+                        self).get_context_data(**kwargs)
+        context[self.detail_context_object_name] = self.object
+        return context
 
 
-class MyUserEditViewModal(BSModalUpdateView):
+class MyUserUpdateViewModal(BSModalUpdateView):
     model = MyUser
     template_name = 'users/profile_edit_modal.html'
     form_class = MyUserUpdateFormModal
-    success_message = 'Email successfully changed.'
-    #  TODO test for succes_url or get_success_url after displaying all user profiles
+    # success_message = 'Email successfully changed.'
+    success_message = ''
     # success_url = '/profile'
 
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
 
 
-class UserProfileEditViewModal(BSModalUpdateView):
+class UserProfileUpdateViewModal(BSModalUpdateView):
     model = UserProfile
     template_name = 'users/profile_edit_modal.html'
     form_class = UserProfileUpdateFormModal
-    success_message = 'Profile successfully updated.'
-    #  TODO test for succes_url or get_success_url after displaying all user profiles
+    # success_message = 'Profile successfully updated.'
+    success_message = ''
     # success_url = '/profile'
 
     def get_success_url(self):
         return self.request.META.get('HTTP_REFERER')
 
     def form_valid(self, form):
+        # TODO Still no idea how to replace with default.
         logger.debug('form_valid')
         delete_current_image = form.cleaned_data['delete_current_image']
         image = form.cleaned_data['image']
@@ -294,13 +266,3 @@ def edit_userprofile(request):
     }
 
     return render(request, 'users/profile_edit_modal.html', context)
-
-
-class CustomLogoutView(LogoutView):
-    def get_next_page(self):
-        next_page = super(LogoutView, self).get_next_page()
-        messages.add_message(
-            self.request, messages.SUCCESS,
-            'You have been logged out'
-        )
-        return next_page

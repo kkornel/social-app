@@ -82,10 +82,10 @@ urlpatterns = [
 
     # Modals
     path('edit-profile/<int:pk>/change-email/',
-         users_views.MyUserEditViewModal.as_view(),
+         users_views.MyUserUpdateViewModal.as_view(),
          name='change-email'),
     path('edit-profile/<int:pk>/',
-         users_views.UserProfileEditViewModal.as_view(),
+         users_views.UserProfileUpdateViewModal.as_view(),
          name='edit-profile'),
 ]
 
