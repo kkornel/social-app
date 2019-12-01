@@ -28,3 +28,7 @@ function openInNewTab(event, url) {
     win.focus();
     event.stopImmediatePropagation();
 }
+
+// function stopImmediatePropagation(event) {
+//     event.stopImmediatePropagation();
+// }
