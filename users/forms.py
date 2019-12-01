@@ -1,6 +1,7 @@
 from bootstrap_modal_forms.forms import BSModalForm
 from django import forms
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import (PasswordChangeForm, PasswordResetForm,
+                                       SetPasswordForm)
 
 from .models import MyUser, UserProfile
 
@@ -18,6 +19,20 @@ class CustomSetPasswordForm(SetPasswordForm):
     Custom SetPasswordForm only for styling Password fields.
     A form that lets user set password without entering the old one.
     """
+    new_password1 = forms.CharField(label='',
+                                    widget=forms.PasswordInput(
+                                        attrs={'placeholder': 'New password'}))
+
+    new_password2 = forms.CharField(label='',
+                                    widget=forms.PasswordInput(
+                                        attrs={'placeholder': 'New password confirmation'}))
+
+
+class CustomChangePasswordForm(PasswordChangeForm):
+    """Custom PasswordChangeForm only for styling Password fields."""
+    old_password = forms.CharField(label='',
+                                   widget=forms.PasswordInput(
+                                       attrs={'placeholder': 'Current password'}))
     new_password1 = forms.CharField(label='',
                                     widget=forms.PasswordInput(
                                         attrs={'placeholder': 'New password'}))

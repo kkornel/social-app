@@ -2,6 +2,7 @@ import logging
 
 from bootstrap_modal_forms.generic import BSModalUpdateView
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.files import File
@@ -11,15 +12,15 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic import DetailView, ListView
+from django.views.generic import ListView, UpdateView
 
 from social.models import Post
 
 from .admin import UserCreationForm
 from .decorators import check_recaptcha, func_log
-from .forms import (CaptchaPasswordResetForm, MyUserUpdateForm,
-                    MyUserUpdateFormModal, UserProfileUpdateForm,
-                    UserProfileUpdateFormModal)
+from .forms import (CaptchaPasswordResetForm, CustomChangePasswordForm,
+                    MyUserUpdateForm, MyUserUpdateFormModal,
+                    UserProfileUpdateForm, UserProfileUpdateFormModal)
 from .models import MyUser, UserProfile
 from .tokens import account_activation_token
 
@@ -143,6 +144,21 @@ def reset_password(request):
     return render(request, 'users/password_reset.html', {'form': form})
 
 
+@login_required
+@check_recaptcha
+def password_change(request):
+    if request.method == 'POST':
+        form = CustomChangePasswordForm(data=request.POST, user=request.user)
+        if form.is_valid() and request.recaptcha_is_valid:
+            form.save()
+            update_session_auth_hash(request, form.user)
+            messages.success(request, 'Password changed.')
+            return redirect('profile', username=request.user.username)
+    else:
+        form = CustomChangePasswordForm(user=request.user)
+    return render(request, 'users/password_change.html', {'form': form})
+
+
 class UserProfileDetailListView(ListView):
     """https://stackoverflow.com/questions/41287431/django-combine-detailview-and-listview"""
     detail_context_object_name = 'userprofile'
@@ -217,6 +233,7 @@ class UserProfileUpdateViewModal(BSModalUpdateView):
                 userprofile.image.save('default.jpg', filee)
                 logger.debug('lil')
         return super().form_valid(form)
+
 
 # Used this to have two forms in one view.
 # Firstly I had a templte using this view,

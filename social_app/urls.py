@@ -75,7 +75,8 @@ urlpatterns = [
              template_name='users/password_reset_complete.html'),
          name='password_reset_complete'),
 
-
+    path('password-change/', users_views.password_change,
+         name='password-change'),
 
     path('profile/<str:username>/',
          users_views.UserProfileDetailListView.as_view(), name='profile'),

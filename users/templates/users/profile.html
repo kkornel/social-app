@@ -47,6 +47,13 @@
 </div>
 
 <div class="col-sm-7 main-column pt-0 pl-0 pr-0">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
     <div class="nav-back">
         <span class="nav-back-span-icon">
             <!-- <a href="javascript:history.back()" class="nav-back-span-a"> -->
@@ -72,6 +79,11 @@
                             <a class="my-drop-menu-item dropdown-item change-email link-hover"
                                 data-id="{% url 'change-email' user.pk %}">
                                 Change email
+                            </a>
+                        </span>
+                        <span class="my-drop-menu-item-span">
+                            <a class="my-drop-menu-item dropdown-item " href="{% url 'password-change' %}">
+                                Change password
                             </a>
                         </span>
                     </div>
