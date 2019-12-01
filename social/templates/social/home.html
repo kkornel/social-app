@@ -5,13 +5,16 @@
 {% block js_block %}
 <script src="{% static 'social/scripts.js' %}"></script>
 <script>
+    $('.dropdown-arrow').click(function (event) {
+        // It solves problem of not opening the dropdown at first click.
+        event.stopPropagation();
+    });
 
-    function elo(event, postId) {
-        console.log(postId);
-        console.log(event);
+    function stopPropagationForGivenPost(event, postId) {
+        // It's used to show dropdown without trigerring 
+        // onlick of whole post.
         $('#' + postId).dropdown();
         event.stopPropagation();
-        return false;
     }
 
     function stopPropagation(event) {
@@ -71,8 +74,8 @@
 
                     {% if user.userprofile == post.author %}
                     <div class="dropdown" style="float: right;">
-                        <a class="link-hover" data-toggle="dropdown" id="post{{post.pk}}"
-                            onclick="elo(event, this.id);">
+                        <a class="link-hover dropdown-arrow" data-toggle="dropdown" id="post{{post.pk}}"
+                            onclick="stopPropagationForGivenPost(event, this.id);">
                             <i class="fa fa-chevron-down dark-icon" aria-hidden="true"></i>
                         </a>
                         <div class="dropdown-menu my-drop-menu" aria-labelledby="dropdownMenuLink">
