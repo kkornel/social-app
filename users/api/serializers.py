@@ -10,18 +10,6 @@ from users.models import MyUser, UserProfile
 logger = logging.getLogger(__name__)
 
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    # image = serializers.SerializerMethodField('get_image_path')
-
-    class Meta:
-        model = UserProfile
-        fields = ['user', 'bio', 'city', 'website', 'image']
-
-    # def get_image_path(self, userprofile):
-        # image = settings.LOCALHOST_URL_0 + userprofile.image.url;
-        # return image
-
-
 class RegistrationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
@@ -56,3 +44,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    # image = serializers.SerializerMethodField('get_image_path')
+
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'bio', 'city', 'website', 'image']
+
+    # def get_image_path(self, userprofile):
+        # image = settings.LOCALHOST_URL_0 + userprofile.image.url;
+        # return image

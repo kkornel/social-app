@@ -1,28 +1,21 @@
 import logging
 
+from django.http import Http404
 from rest_framework import generics, mixins, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.decorators import func_log
 from users.models import MyUser, UserProfile
 
+from .permissions import IsOwnerOrReadOnly
 from .serializers import RegistrationSerializer, UserProfileSerializer
 
-# from .models import
-
-
 logger = logging.getLogger(__name__)
-
-
-class GetAllUsersApiView(generics.ListAPIView):
-    serializer_class = UserProfileSerializer
-    queryset = UserProfile.objects.all()
-
-    permission_classes = (AllowAny, )
 
 
 @api_view(['POST'])
@@ -45,7 +38,47 @@ def registration_view(request):
         return Response(data)
 
 
-class UserProfileView(
+class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+    permission_classes = (AllowAny, )
+    # IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
+
+    def get_object(self, username):
+        try:
+            user = MyUser.objects.get(username=username)
+            logger.debug(user)
+            userprofile = UserProfile.objects.get(user=user)
+            logger.debug(userprofile)
+            return userprofile
+        except UserProfile.DoesNotExist:
+            raise Http404
+
+    def get(self, request, username, format=None):
+        userprofile = self.get_object(username)
+        serializer = UserProfileSerializer(userprofile)
+        return Response(serializer.data)
+
+    def post(self, request, username, format=None):
+        logger.debug(request.data)
+        userprofile = self.get_object(username)
+        serializer = UserProfileSerializer(
+            userprofile, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetAllUsersApiView(generics.ListAPIView):
+    serializer_class = UserProfileSerializer
+    queryset = UserProfile.objects.all()
+
+    permission_classes = (AllowAny, )
+
+
+class UserProfilesView(
         mixins.ListModelMixin,
         mixins.CreateModelMixin,
         generics.GenericAPIView):
@@ -63,7 +96,7 @@ class UserProfileView(
         return self.create(self, request, *args, **kwargs)
 
 
-class UserProfileCreateView(
+class UserProfilesCreateView(
         mixins.ListModelMixin,
         generics.CreateAPIView):
     '''
@@ -79,7 +112,7 @@ class UserProfileCreateView(
         return self.list(self, request, *args, **kwargs)
 
 
-class UserProfilePostListCreateView(generics.ListAPIView):
+class UserProfilesPostListCreateView(generics.ListAPIView):
     ''' This one has the exact same functionallity like UserProfileView and UserProfileCreateView
     but we inherit from other generic so we have to write less code.
     '''
@@ -105,9 +138,13 @@ class TestView(APIView):
 
     permission_classes = (IsAuthenticated, )
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, username, format=None):
+        logger.debug('with username')
         logger.debug(request.user)
         logger.debug(request.auth)
+        logger.debug(request.data)
+        logger.debug(username)
+        logger.debug(dir(request))
 
         userprofile = UserProfile.objects.get(user=request.user)
         serializer = UserProfileSerializer(userprofile)
@@ -117,6 +154,23 @@ class TestView(APIView):
         response['email'] = request.user.email
         del response['user']
         return Response(response)
+        # return Response(serializer.data)
+
+    # def get(self, request, *args, **kwargs):
+    #     logger.debug(request.user)
+    #     logger.debug(request.auth)
+    #     logger.debug(request.data)
+    #     logger.debug(request.query_params)
+    #     logger.debug(dir(request))
+
+    #     userprofile = UserProfile.objects.get(user=request.user)
+    #     serializer = UserProfileSerializer(userprofile)
+
+    #     response = serializer.data.copy()
+    #     response['username'] = request.user.username
+    #     response['email'] = request.user.email
+    #     del response['user']
+    #     return Response(response)
         # return Response(serializer.data)
 
     @func_log

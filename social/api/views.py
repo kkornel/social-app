@@ -1,6 +1,6 @@
 import logging
 
-from rest_framework import generics, mixins, status
+from rest_framework import filters, generics, mixins, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -17,13 +17,15 @@ logger = logging.getLogger(__name__)
 class PostRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
-
     permission_classes = (AllowAny, )
 
 
 class PostViewApi(generics.ListAPIView):
     serializer_class = PostSerializer
     queryset = Post.objects.all()
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['date_posted']
+    ordering = ['-date_posted']
 
     permission_classes = (AllowAny, )
 
