@@ -1,9 +1,13 @@
+import logging
+
 from rest_framework import permissions
+
+logger = logging.getLogger(__name__)
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
-    Custom permission to only allow owners of an object to edit it.
+    Custom permission to only allow owners of an account to edit it.
     """
 
     def has_object_permission(self, request, view, obj):
@@ -12,5 +16,5 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # Write permissions are only allowed to the owner of the snippet.
-        return obj.owner == request.user
+        # Write permissions are only allowed to the owner of the account.
+        return obj.user.id == request.user.id

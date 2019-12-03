@@ -38,11 +38,15 @@ def registration_view(request):
         return Response(data)
 
 
-class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = UserProfileSerializer
-    queryset = UserProfile.objects.all()
-    permission_classes = (AllowAny, )
-    # IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    """
+    RetrieveUpdateAPIView instead of RetrieveUpdateDestroyAPIView,
+    because there is no need in deleting UserProfile object. 
+    When we delete User object UserProfile gets destroyed on cascade.
+    """
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    # No allowing PUT method, because UserProfile should be only created when User is created.
+    http_method_names = ('get', 'patch')
 
     def get_object(self, username):
         try:
@@ -59,11 +63,12 @@ class UserProfileView(generics.RetrieveUpdateDestroyAPIView):
         serializer = UserProfileSerializer(userprofile)
         return Response(serializer.data)
 
-    def post(self, request, username, format=None):
+    def patch(self, request, username, format=None):
         logger.debug(request.data)
         userprofile = self.get_object(username)
+        self.check_object_permissions(self.request, userprofile)
         serializer = UserProfileSerializer(
-            userprofile, data=request.data)
+            userprofile, data=request.data, context={'request': request})
 
         if serializer.is_valid():
             serializer.save()

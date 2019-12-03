@@ -5,6 +5,8 @@ from django.conf import settings
 from django.contrib.auth import password_validation
 from rest_framework import serializers
 
+from social.api.serializers import (CommentSerializer, LikeSerializer,
+                                    PostSerializer)
 from users.models import MyUser, UserProfile
 
 logger = logging.getLogger(__name__)
@@ -47,12 +49,42 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # image = serializers.SerializerMethodField('get_image_path')
+    # TODO followers, following
+    posts = serializers.SerializerMethodField('get_user_posts')
+    comments = serializers.SerializerMethodField('get_user_comments')
+    likes = serializers.SerializerMethodField('get_user_likes')
 
     class Meta:
         model = UserProfile
-        fields = ['user', 'bio', 'city', 'website', 'image']
+        fields = ['user', 'bio', 'city', 'website',
+                  'image', 'posts', 'comments', 'likes']
 
-    # def get_image_path(self, userprofile):
-        # image = settings.LOCALHOST_URL_0 + userprofile.image.url;
-        # return image
+    def get_fields(self, *args, **kwargs):
+        # Excluding user field, because we cannot update it.
+        # Only bio, city, website changes are allowed.
+        fields = super(UserProfileSerializer, self).get_fields(*args, **kwargs)
+        request = self.context.get('request', None)
+        if request and getattr(request, 'method', None) == "PATCH":
+            fields['user'].required = False
+        return fields
+
+    def get_user_posts(self, userprofile):
+        posts = []
+        for post in userprofile.posts.order_by('-date_posted'):
+            serializer = PostSerializer(post)
+            posts.append(serializer.data)
+        return posts
+
+    def get_user_comments(self, userprofile):
+        comments = []
+        for comment in userprofile.comments.order_by('-date_created'):
+            serializer = CommentSerializer(comment)
+            comments.append(serializer.data)
+        return comments
+
+    def get_user_likes(self, userprofile):
+        likes = []
+        for like in userprofile.likes.all():
+            serializer = LikeSerializer(like)
+            likes.append(serializer.data)
+        return likes
